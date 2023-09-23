@@ -1,0 +1,23 @@
+Lexeme Table:
+lexeme          token type
+        var     29
+Error : Identifier names cannot exceed 11 characters
+          ,     17
+          y     2
+          ;     18
+Error : Invalid Symbol
+      begin     21
+Error : Numbers cannot exceed 5 digits
+Error : Invalid Symbol
+          x     2
+         :=     20
+          y     2
+Error : Identifiers cannot begin with a digit
+          *     6
+          2     3
+          ;     18
+        end     22
+          .     19
+
+Token List:
+29 17 2 y 18 21 2 x 20 2 y 6 3 2 18 22 19 

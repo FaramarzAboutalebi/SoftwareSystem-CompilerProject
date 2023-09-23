@@ -1,0 +1,46 @@
+Lexeme Table:
+lexeme          token type
+          m     2
+          7     3
+          +     4
+          -     5
+          *     6
+          /     7
+        xor     8
+          =     9
+         <>     10
+          <     11
+         <=     12
+          >     13
+         >=     14
+          (     15
+          )     16
+          ,     17
+          ;     18
+          .     19
+         :=     20
+      begin     21
+        end     22
+         if     23
+       then     24
+      while     25
+         do     26
+       call     27
+      const     28
+        var     29
+  procedure     30
+      write     31
+       read     32
+       else     33
+Error : Identifiers cannot begin with a digit
+Error : Identifier names cannot exceed 11 characters
+Error : Numbers cannot exceed 5 digits
+Error : Invalid Symbol
+Error : Invalid Symbol
+Error : Invalid Symbol
+Error : Invalid Symbol
+Error : Invalid Symbol
+Error : Invalid Symbol
+
+Token List:
+2 m 3 7 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 

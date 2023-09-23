@@ -1,0 +1,4 @@
+var xxxxxxxxxxxxxx123456, y;
+& begin 000567asdfg %
+	x := y 2excaedasasdfasdfkjdfadsat* 2;
+end.
