@@ -1,12 +1,12 @@
 Lexeme Table:
 lexeme          token type
           m     2
-          7     3
+          7     3 
           +     4
           -     5
           *     6
           /     7
-        xor     8
+        xor     8  //,,
           =     9
          <>     10
           <     11
@@ -19,9 +19,9 @@ lexeme          token type
           ;     18
           .     19
          :=     20
-      begin     21
-        end     22
-         if     23
+      begin     21 //....
+        end     22 //....
+         if     23 //....
        then     24
       while     25
          do     26
