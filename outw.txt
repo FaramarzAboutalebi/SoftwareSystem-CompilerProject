@@ -1,0 +1,58 @@
+Source Program:
+/*lets try a comment*/
++ - * = / ( ) , . < > ; : &
+<> <= >= :=
+if else begin end then while do call const var procedure write read ifel
+/*
+    Lets
+    try
+    another
+    comment
+*//*Sike here's another*/
+goodLength badLength123
+12345 123456
+/* One last comment */
+
+Lexeme Table:
+
+lexeme               
++               token type     4
+-                    5
+*                    6
+=                    9
+/                    7
+(                    15
+)                    16
+,                    17
+.                    19
+<                    11
+>                    13
+;                    18
+:                    Error: Not a valid symbol
+&                    Error: Not a valid symbol
+<>                   10
+<=                   12
+>=                   14
+:=                   20
+if                   23
+else                 33
+begin                21
+end                  22
+then                 24
+while                25
+do                   26
+call                 27
+const                28
+var                  29
+procedure            30
+write                31
+read                 32
+ifel                 8
+goodLength           2
+badLength123         Error: Ident length too long
+12345                3
+123456               Error: Too many digits
+
+Token List:
+4 5 6 9 7 15 16 17 19 11 13 18 10 12 14 20 23 33 21 22 24 25 26 27 28 29 30 31 32 8 2 goodLength 3 12345
+ 

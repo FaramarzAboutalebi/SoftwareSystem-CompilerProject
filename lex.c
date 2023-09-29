@@ -1,4 +1,10 @@
-//new update
+/*
+  Aouthors' names:
+
+  Faramarz Aboutalebi
+  Ethan Stein
+
+*/
 
 #include <stdio.h>
 #include <ctype.h>
@@ -6,18 +12,24 @@
 
 
 #define MAX_ARRAY_LENGTH 1000 
+// Maximum length of the number
 #define MAX_DIGITS_LENGTH 5
+// Maximum length of the 
 #define MAX_CHARACTER_LENGTH 11
+
+//file pointer 
+FILE *fp2;
+
 
 typedef enum { 
 skipsym = 1, 
 identsym = 2, 
 numbersym = 3,  
-plussym = 4,  //...
-minussym = 5, //...
-multsym = 6, //...
-slashsym = 7, //...
-ifelsym = 8,  //...
+plussym = 4,  
+minussym = 5, 
+multsym = 6, 
+slashsym = 7, 
+ifelsym = 8,  
 eqlsym = 9, 
 neqsym = 10, 
 lessym = 11, 
@@ -43,30 +55,17 @@ procsym = 30,
 writesym = 31, 
 readsym = 32, 
 elsesym = 33
-} token_type;
+} token_type; 
 
-/******************************************************/
 
+//struture to store the lexeme and token
 typedef struct {
   char string[MAX_ARRAY_LENGTH];
   int Token;
 } subString;
 
-/******************************************************/
 
-//this function takes input array and index and if that element is space or tab or new line, it will skip that element and traverse to get to a ont space, non tab and non new line element
-
-int indexOfNextVisibleElement(char input[], int index) { // function
-  
-
-  while(input[index+1] >= 0 && input[index+1] <= 32)
-    index++;
-  return index+1;
-  
-}
-
-/******************************************************/
-    
+// This function takes the input anf convert it to subString and store them to the subString array which is a sttructure array     
 int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString, int sizeOfsubString, int stringIndex){   // function
 
     for(int i = 0; i < sizeOfinputArr; i++){
@@ -76,11 +75,13 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       {
         continue;
       }
-      if(isdigit(inputArr[i])){//..........
+      if(isdigit(inputArr[i])){// if the charactor is a digit
         
-        stringIndex = 0; //.....
+        stringIndex = 0; 
+        // add the digit to the string
         subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
-      
+
+        // while the next charactors are digits add them to the string
         while(isdigit(inputArr[i+1])){
           i++;
           subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
@@ -93,14 +94,19 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
         // increment sizeOfsubString to create another string
         sizeOfsubString++;
       }
-    else if(isalpha(inputArr[i])){// identifier and number
-      stringIndex = 0; //.....
-      subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
+    else if(isalpha(inputArr[i])){// identifier 
       
+      stringIndex = 0; 
+
+      // add the alphabet to the string
+      subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
+
+      // while the next charactors are alphabet or digits add them to the string
       while(isalpha(inputArr[i+1]) || isdigit(inputArr[i+1])){
         i++;
         subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
       }
+      
       // add null terminator
       subString[sizeOfsubString].string[stringIndex] = '\0'; 
       
@@ -108,11 +114,17 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       stringIndex = 0;
       // increment sizeOfsubString to create another string
       sizeOfsubString++;
+      
     }
     else if( ((inputArr[i] == '<' && inputArr[i+1] == '>') || (inputArr[i] == '<' && inputArr[i+1] == '=') || (inputArr[i] == '>' && inputArr[i+1] == '=') || (inputArr[i] == ':' && inputArr[i+1] == '='))){ // take care of <>   <=   >=   :=
-      stringIndex = 0; //.....
+      
+      stringIndex = 0; 
+
+      // add < or > or : to the string
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
+      //add > or = to the string
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i+1];
+      
       // add null terminator
       subString[sizeOfsubString].string[stringIndex] = '\0'; 
 
@@ -127,11 +139,9 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
     }
     else if((inputArr[i] == '/' && inputArr[i+1] == '*')){// handle comment
 
-     
-      stringIndex = 0; //.....
-      // printf("indexOfNextVisibleElement(inputArr, i) %d\n",indexOfNextVisibleElement(inputArr, i));//..................
-      // we travee in the inputArr to figure out if there is a star and slash. If so, it means we have to skip the contents of the comment
-      int iHolder = i;
+      stringIndex = 0; 
+      
+      // Traversing in the array to see if */ exsists
       int j;
       for(j = i+1+1; j <  sizeOfinputArr; j++){
         if(inputArr[j] == '*' && inputArr[j+1] == '/'){
@@ -139,20 +149,21 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
           i = j+1;
           break;
         }
-          
-        
+
       }
-      if(i < j+1){
+      if(i < j+1){ //  if */ did not find
 
         //creates two diffrent subStrings, one for the star and one for the slash
         subString[sizeOfsubString].string[stringIndex] = inputArr[i];
         stringIndex++;
+        // add null terminator
         subString[sizeOfsubString].string[stringIndex] = '\0'; 
         sizeOfsubString++;
         //next string
         stringIndex = 0;
         subString[sizeOfsubString].string[stringIndex] = inputArr[i+1];
         stringIndex++;
+        // add null terminator
         subString[sizeOfsubString].string[stringIndex] = '\0'; 
         sizeOfsubString++;
        
@@ -160,11 +171,9 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       //update the index to last used element
       i = i+1;
       }
-      // printf("indexOfNextVisibleElement(inputArr, i) %d\n",i);//................
-      // printf("inputArr[] %c\n", inputArr[i]);
-      
+       
     }
-    else if(inputArr[i] != ' ' && inputArr[i] != '\t' && inputArr[i] != '\n'){
+    else if(inputArr[i] != ' ' && inputArr[i] != '\t' && inputArr[i] != '\n'){ //taking care of sybmols and oprators
 
       
       
@@ -180,7 +189,6 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       
     }
     
-    
   }
 
   return sizeOfsubString;
@@ -188,9 +196,10 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
 }//end
 
 /******************************************************/
-int isThisAnumber(char string[]){
+int isThisAnumber(char string[]){//checks if the string is a number
+  
   int sizeOfstring = strlen(string);
-  if(sizeOfstring > 5) sizeOfstring = 5;
+  
   for(int i = 0; i < sizeOfstring; i++){
     if(!isdigit(string[i]))
       return 0;
@@ -221,11 +230,11 @@ void tokenCreator(subString * subString, int sizeOfsubString){  //function
       subString[i].Token = slashsym;
     }
     //ifel
-    else if(strcmp(subString[i].string, "ifel") == 0){//?????
+    else if(strcmp(subString[i].string, "ifel") == 0){
       subString[i].Token = ifelsym;
     }
     //equal
-    else if(strcmp(subString[i].string, "=") == 0){//???
+    else if(strcmp(subString[i].string, "=") == 0){
       subString[i].Token = eqlsym;
     }
     //non equal
@@ -325,15 +334,12 @@ void tokenCreator(subString * subString, int sizeOfsubString){  //function
       subString[i].Token = elsesym;
     }
     //number
-      
     else if(isThisAnumber(subString[i].string)){
 
       if(strlen(subString[i].string) <= MAX_DIGITS_LENGTH)
         subString[i].Token = numbersym;
       else
         subString[i].Token = -1;//Error : Numbers cannot exceed 5 digits
-
-      
     }
     //idenfier
     else if(isalpha(subString[i].string[0]) || isdigit(subString[i].string[0])){
@@ -355,88 +361,124 @@ void tokenCreator(subString * subString, int sizeOfsubString){  //function
 
 /******************************************************/
 
+//prints out the lexeme table 
 void LexemeTable(subString * subString, int sizeOfsubString){
-  printf("Lexeme Table:\n"); //..............................................
-  printf("lexeme\t\ttoken type\n");
   
+  printf("Lexeme Table:\n");
+  fprintf(fp2,"Lexeme Table:\n");//print to output file
+  
+  printf("lexeme\t\ttoken type\n");
+  fprintf(fp2, "lexeme      token type\n");//print to output file
+
+  //prints out the lexemes
   for(int i = 0; i < sizeOfsubString; i++){
     
-    if(subString[i].Token >0){
+    if(subString[i].Token >0){// check if token is valid
       
       printf("%s", subString[i].string);
+      fprintf(fp2, "%s", subString[i].string);//print to output file
+      
       //creat the space to build the lexeme table
       int len = strlen(subString[i].string);
-      
       for(int j = 0; j < 12 - len; j++ ){
         printf(" ");
+        fprintf(fp2, " ");//print to output file
       }
       
     }
-    
-    if(subString[i].Token == -1)
-      printf("Error : Numbers cannot exceed 5 digits\n");
-    else if(subString[i].Token == -2)
-      printf("Error : Identifiers cannot exceed 11 characters in length\n");
-    else if(subString[i].Token == -3)
-      printf("Error : Invalid Symbol\n");
-    else
+    //prints the erorrs
+    if(subString[i].Token == -1){
+      printf("Error : Number too long.\n");
+      fprintf(fp2, "Error : Number too long.\n");//print to output file
+    }
+    else if(subString[i].Token == -2){
+      printf("Error : Name too long.\n");
+      fprintf(fp2, "Error : Name too long.\n");//print to
+    }
+    else if(subString[i].Token == -3){
+      printf("Error : Invalid Symbols.\n");
+      fprintf(fp2, "Error : Invalid Symbols.\n");//print to output file
+    }
+    else{
       printf("%d\n", subString[i].Token);
+      fprintf(fp2, "%d\n", subString[i].Token);//print to output file
+    }
       
   }
   
 }
 
 /******************************************************/
+//prints out the token list
 void TokenList(subString * subString, int sizeOfsubString){
   
   printf("Token List:\n"); 
+  fprintf(fp2, "Token List:\n");//print to output file
+  
   for(int i = 0; i < sizeOfsubString; i++){
     //prints valid tokens
-    if(subString[i].Token >0)
+    if(subString[i].Token >0){
       printf("%d ", subString[i].Token);
+      fprintf(fp2, "%d ", subString[i].Token);//print to output file
+    }
     if(subString[i].Token == 2 || subString[i].Token == 3){
       printf("%s ", subString[i].string);
+      fprintf(fp2, "%s ", subString[i].string);//print to output file
     }
   }
   printf("\n");
+  fprintf(fp2, "\n");//print to output file
   
 }
 /******************************************************/
 
 int main( int argc, char *argv[]){
 
-  if(argc < 2){
+  
+  if(argc < 2){//checks if there is a file
     printf("Error : please include the file name");
     return 1;
   }
   
-  FILE *fp = fopen(argv[1], "r");
+  FILE *fp = fopen(argv[1], "r");//opens the file
 
-  if(fp == NULL){
+  if(fp == NULL){//checks if the file is valid
     printf("Error : cannot open file");
     return 1;
   
   }
 
+  //define the inputArr array and subString array
   char inputArr[MAX_ARRAY_LENGTH];
   subString subString[MAX_ARRAY_LENGTH];
+  //define a variable to track the size of the inputArr array
   int sizeOfinputArr = 0;
+  //define a variable to track the size of the subString array
   int sizeOfsubString = 0;
+  
   char c;
   //read character input by fscanf
   while(fscanf(fp, "%c", &c) != EOF){
-    //reads the file and store chacracter bt chacracter in the arr
+    //reads the file and store chacracter by chacracter in the arr
     inputArr[sizeOfinputArr] = c;
     sizeOfinputArr++;
   }
   
+  //close fp
+  fclose(fp);
+  
   //set the end of the inputArr to null
   inputArr[sizeOfinputArr] = '\0';
 
+  //open a file in w mode
+  fp2 = fopen("output.txt", "w");
+  
   //print the source code
   printf("Source Program:\n");
+  fprintf(fp2, "Source Program:\n"); //print to file
   for(int i = 0; i < sizeOfinputArr; i++){
     printf("%c", inputArr[i]);
+    fprintf(fp2, "%c", inputArr[i]); //print to file
   }
   
   
@@ -444,22 +486,26 @@ int main( int argc, char *argv[]){
   //arrTracker is the last index of the array
   int stringIndex = 0;
 
-  //creat subStrings and return the # of the strings
+  //call function to creat subStrings and return the # of the strings
   sizeOfsubString = subStringCreater(inputArr, sizeOfinputArr, subString, sizeOfsubString, stringIndex);// call function
 
-  //generate token for eac subString
+  //call function to generate token for eac subString
   tokenCreator(subString, sizeOfsubString); // call function
 
   
   printf("\n\n");
-  //print the lexeme table
+  fprintf(fp2, "\n\n");//print to file
+  
+  //call function to print the lexeme table
   LexemeTable(subString, sizeOfsubString);
 
-  //print the token list
+  //call function to print the token list
   TokenList(subString, sizeOfsubString);
 
   
 
+  //close fp2
+  fclose(fp2);
 
   return 0;
   
