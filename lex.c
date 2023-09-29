@@ -1,9 +1,11 @@
+//new update
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
-//??????????????????
-#define MAX_ARRAY_LENGTH 500 
+
+#define MAX_ARRAY_LENGTH 1000 
 #define MAX_DIGITS_LENGTH 5
 #define MAX_CHARACTER_LENGTH 11
 
@@ -318,8 +320,21 @@ void tokenCreator(subString * subString, int sizeOfsubString){  //function
 void LexemeTable(subString * subString, int sizeOfsubString){
   printf("Lexeme Table:\n"); //..............................................
   printf("lexeme\t\ttoken type\n");
+  
   for(int i = 0; i < sizeOfsubString; i++){
-    printf("%s\t\t\t", subString[i].string);
+    
+    if(subString[i].Token >0){
+      
+      printf("%s", subString[i].string);
+      //creat the space to build the lexeme table
+      int len = strlen(subString[i].string);
+      
+      for(int j = 0; j < 12 - len; j++ ){
+        printf(" ");
+      }
+      
+    }
+    
     if(subString[i].Token == -1)
       printf("Error : Numbers cannot exceed 5 digits\n");
     else if(subString[i].Token == -2)
@@ -340,11 +355,14 @@ void TokenList(subString * subString, int sizeOfsubString){
   
   printf("Token List:\n"); 
   for(int i = 0; i < sizeOfsubString; i++){
-    printf("%d ", subString[i].Token);
+    //prints valid tokens
+    if(subString[i].Token >0)
+      printf("%d ", subString[i].Token);
     if(subString[i].Token == 2 || subString[i].Token == 3){
       printf("%s ", subString[i].string);
     }
   }
+  printf("\n");
   
 }
 /******************************************************/
@@ -378,6 +396,13 @@ int main( int argc, char *argv[]){
   
   //set the end of the inputArr to null
   inputArr[sizeOfinputArr] = '\0';
+
+  //print the source code
+  printf("Source Program:\n");
+  for(int i = 0; i < sizeOfinputArr; i++){
+    printf("%c", inputArr[i]);
+  }
+  
   
   //arrTracker
   //arrTracker is the last index of the array
