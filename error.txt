@@ -1,0 +1,16 @@
+4Hello
+he4llo
+hello4
+qwertyuiopas
+123456
+/*comment*/
+/*notComment* /
+<>
+< >
+<=
+< =
+>=
+> =
+
+:=
+: =

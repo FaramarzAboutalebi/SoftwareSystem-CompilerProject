@@ -76,7 +76,24 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       {
         continue;
       }
-    else if(isalpha(inputArr[i]) || isdigit(inputArr[i])){// identifier and number
+      if(isdigit(inputArr[i])){//..........
+        
+        stringIndex = 0; //.....
+        subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
+      
+        while(isdigit(inputArr[i+1])){
+          i++;
+          subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
+        }
+        // add null terminator
+        subString[sizeOfsubString].string[stringIndex] = '\0'; 
+        
+        // set stringIndex to 0 to use it for creating another string
+        stringIndex = 0;
+        // increment sizeOfsubString to create another string
+        sizeOfsubString++;
+      }
+    else if(isalpha(inputArr[i])){// identifier and number
       stringIndex = 0; //.....
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
       
@@ -92,15 +109,15 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       // increment sizeOfsubString to create another string
       sizeOfsubString++;
     }
-    else if( ((inputArr[i] == '<' && inputArr[indexOfNextVisibleElement(inputArr, i)] == '>') || (inputArr[i] == '<' && inputArr[indexOfNextVisibleElement(inputArr, i)] == '=') || (inputArr[i] == '>' && inputArr[indexOfNextVisibleElement(inputArr, i)] == '=') || (inputArr[i] == ':' && inputArr[indexOfNextVisibleElement(inputArr, i)] == '=')) && indexOfNextVisibleElement(inputArr, i) != -1){ // take care of <>   <=   >=   :=
+    else if( ((inputArr[i] == '<' && inputArr[i+1] == '>') || (inputArr[i] == '<' && inputArr[i+1] == '=') || (inputArr[i] == '>' && inputArr[i+1] == '=') || (inputArr[i] == ':' && inputArr[i+1] == '='))){ // take care of <>   <=   >=   :=
       stringIndex = 0; //.....
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
-      subString[sizeOfsubString].string[stringIndex++] = inputArr[indexOfNextVisibleElement(inputArr, i)];
+      subString[sizeOfsubString].string[stringIndex++] = inputArr[i+1];
       // add null terminator
       subString[sizeOfsubString].string[stringIndex] = '\0'; 
 
       //update the index to last used element
-      i = indexOfNextVisibleElement(inputArr, i);
+      i = i+1;
 
       // set stringIndex to 0 to use it for creating another string
       stringIndex = 0;
@@ -108,19 +125,40 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
       sizeOfsubString++;
       
     }
-    else if((inputArr[i] == '/' && inputArr[indexOfNextVisibleElement(inputArr, i)] == '*') && indexOfNextVisibleElement(inputArr, i) != -1){// handle comment
+    else if((inputArr[i] == '/' && inputArr[i+1] == '*')){// handle comment
 
-      // printf("jfjjfjfjjffjjfjfjjfjfjjfjfjjfjf\n");//............
+     
       stringIndex = 0; //.....
       // printf("indexOfNextVisibleElement(inputArr, i) %d\n",indexOfNextVisibleElement(inputArr, i));//..................
       // we travee in the inputArr to figure out if there is a star and slash. If so, it means we have to skip the contents of the comment
-      for(int j = indexOfNextVisibleElement(inputArr, i)+1; j <  sizeOfinputArr; j++){
-        if(inputArr[j] == '*' && inputArr[indexOfNextVisibleElement(inputArr, j)] == '/'){
+      int iHolder = i;
+      int j;
+      for(j = i+1+1; j <  sizeOfinputArr; j++){
+        if(inputArr[j] == '*' && inputArr[j+1] == '/'){
           //update the index to skip the comment
-          i = indexOfNextVisibleElement(inputArr, j);
+          i = j+1;
           break;
         }
+          
         
+      }
+      if(i < j+1){
+
+        //creates two diffrent subStrings, one for the star and one for the slash
+        subString[sizeOfsubString].string[stringIndex] = inputArr[i];
+        stringIndex++;
+        subString[sizeOfsubString].string[stringIndex] = '\0'; 
+        sizeOfsubString++;
+        //next string
+        stringIndex = 0;
+        subString[sizeOfsubString].string[stringIndex] = inputArr[i+1];
+        stringIndex++;
+        subString[sizeOfsubString].string[stringIndex] = '\0'; 
+        sizeOfsubString++;
+       
+
+      //update the index to last used element
+      i = i+1;
       }
       // printf("indexOfNextVisibleElement(inputArr, i) %d\n",i);//................
       // printf("inputArr[] %c\n", inputArr[i]);
@@ -299,16 +337,14 @@ void tokenCreator(subString * subString, int sizeOfsubString){  //function
     }
     //idenfier
     else if(isalpha(subString[i].string[0]) || isdigit(subString[i].string[0])){
-      if(isdigit(subString[i].string[0]))
-        subString[i].Token = -2;//Error : Identifiers cannot begin with a digit
-      else if(strlen(subString[i].string) > MAX_CHARACTER_LENGTH)
-        subString[i].Token = -3;//Error : Identifiers cannot exceed 11 characters in length
+      if(strlen(subString[i].string) > MAX_CHARACTER_LENGTH)
+        subString[i].Token = -2;//Error : Identifiers cannot exceed 11 characters in length
       else
         subString[i].Token = identsym;
     }
     
     else
-      subString[i].Token = -4;// Error : Invalid Symbol
+      subString[i].Token = -3;// Error : Invalid Symbol
     
       
 
@@ -340,10 +376,8 @@ void LexemeTable(subString * subString, int sizeOfsubString){
     if(subString[i].Token == -1)
       printf("Error : Numbers cannot exceed 5 digits\n");
     else if(subString[i].Token == -2)
-      printf("Error : Identifiers cannot begin with a digit\n");
-    else if(subString[i].Token == -3)
       printf("Error : Identifiers cannot exceed 11 characters in length\n");
-    else if(subString[i].Token == -4)
+    else if(subString[i].Token == -3)
       printf("Error : Invalid Symbol\n");
     else
       printf("%d\n", subString[i].Token);
