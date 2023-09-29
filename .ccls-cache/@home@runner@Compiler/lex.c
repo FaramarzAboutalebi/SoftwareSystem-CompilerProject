@@ -59,13 +59,9 @@ typedef struct {
 int indexOfNextVisibleElement(char input[], int index) { // function
   
 
-  if(!(input[index+1] >=0 && input[index+1] <= 32)) { // if that element is not invisble
-    return index+1;
-  }
-  else if(index < strlen(input))
-  return indexOfNextVisibleElement(input, index+1);
-
-  return -1;
+  while(input[index+1] >= 0 && input[index+1] <= 32)
+    index++;
+  return index+1;
   
 }
 
@@ -114,14 +110,20 @@ int subStringCreater(char * inputArr, int sizeOfinputArr, subString * subString,
     }
     else if((inputArr[i] == '/' && inputArr[indexOfNextVisibleElement(inputArr, i)] == '*') && indexOfNextVisibleElement(inputArr, i) != -1){// handle comment
 
+      // printf("jfjjfjfjjffjjfjfjjfjfjjfjfjjfjf\n");//............
       stringIndex = 0; //.....
+      // printf("indexOfNextVisibleElement(inputArr, i) %d\n",indexOfNextVisibleElement(inputArr, i));//..................
       // we travee in the inputArr to figure out if there is a star and slash. If so, it means we have to skip the contents of the comment
       for(int j = indexOfNextVisibleElement(inputArr, i)+1; j <  sizeOfinputArr; j++){
-        if(inputArr[j] == '*' && inputArr[indexOfNextVisibleElement(inputArr, j)] == '/')
+        if(inputArr[j] == '*' && inputArr[indexOfNextVisibleElement(inputArr, j)] == '/'){
           //update the index to skip the comment
           i = indexOfNextVisibleElement(inputArr, j);
+          break;
+        }
         
       }
+      // printf("indexOfNextVisibleElement(inputArr, i) %d\n",i);//................
+      // printf("inputArr[] %c\n", inputArr[i]);
       
     }
     else if(inputArr[i] != ' ' && inputArr[i] != '\t' && inputArr[i] != '\n'){
@@ -414,6 +416,8 @@ int main( int argc, char *argv[]){
   //generate token for eac subString
   tokenCreator(subString, sizeOfsubString); // call function
 
+  
+  printf("\n\n");
   //print the lexeme table
   LexemeTable(subString, sizeOfsubString);
 

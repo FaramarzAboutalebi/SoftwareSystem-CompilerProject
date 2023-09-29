@@ -1,0 +1,13 @@
+/*lets try a comment*/
++ - * = / ( ) , . < > ; : &
+<> <= >= := 
+if else begin end then while do call const var procedure write read ifel
+/* 
+    Lets
+    try
+    another
+    comment
+*//*Sike here's another*/
+goodLength badLength123 
+12345 123456
+/* One last comment */

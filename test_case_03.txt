@@ -4,7 +4,7 @@ m
 -
 *
 /
-xor
+ifel
 =
 <>
 <
@@ -30,8 +30,8 @@ procedure
 write
 read
 else
-/* Comment should be ignored and not tokenized */
 4lpha
+/* Comment should be ignored and not tokenized */
 identifierToLong
 9999999999
 !@_#$^
