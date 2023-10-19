@@ -2,10 +2,10 @@
 - Ethan Stein
 - Faramarz Aboutalebi
 
-# Purpose of this code
+# Purpose of this code:
 - Getting the PL/0 code and generating the tokens 
 
-# Running The Program
+# Running The Program:
 
 - In order to run this program GCC Compiler must be installed.
 
