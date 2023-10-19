@@ -1,6 +1,7 @@
 compile = "gcc lex.c -o lex"
 run = "./lex input.txt"
 hidden = ["main", "main-debug", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
+entrypoint = "main.c"
 
 [nix]
 channel = "stable-22_11"

@@ -1,0 +1,30 @@
+Source Program:
+var xxxxxxxxxxxxxx123456, y;
+& begin 000567asdfg %
+    x := y 2excaedasasdfasdfkjdfadsat* 2;
+end.
+
+Lexeme Table:
+lexeme      token type
+var         29
+Error : Name too long.
+,           17
+y           2
+;           18
+Error : Invalid Symbols.
+begin       21
+Error : Number too long.
+asdfg       2
+Error : Invalid Symbols.
+x           2
+:=          20
+y           2
+2           3
+Error : Name too long.
+*           6
+2           3
+;           18
+end         22
+.           19
+Token List:
+29 17 2 y 18 21 2 asdfg 2 x 20 2 y 3 2 6 3 2 18 22 19 
