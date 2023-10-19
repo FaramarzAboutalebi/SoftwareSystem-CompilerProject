@@ -1,9 +1,9 @@
-# Athurs:
+# Authors:
 - Ethan Stein
 - Faramarz Aboutalebi
 
-# Persose of this code
-- Getting PL/0 code and generate the tokens 
+# Purpose of this code
+- Getting the PL/0 code and generating the tokens 
 
 # Running The Program
 
