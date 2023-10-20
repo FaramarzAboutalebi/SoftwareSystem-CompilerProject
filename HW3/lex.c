@@ -500,6 +500,73 @@ void TokenListAndTokenArrayPopulat(subString * subString, int sizeOfsubString, i
 
 
 /******************************************************/
+//implement symbol table
+void SymbolTable(symbol symbolTable[], int * sizeOfSymbolTable, stringHolder identArray[], int sizeOfidentArray, int token_array[], int sizeOftoken_arra){
+  // const = 1, var = 2, proc = 3
+  //for HW3 we only have const and var
+  //looking for 'const' and 'var' in the toke array
+  int address = 3;
+  int ident_index = 0;
+  for(int i = 0; i < sizeOftoken_arra; i++){
+    
+    //For constants, you must store kind, name and value.
+    // if the token is a const. making sure 28 represnts const not number
+    if(token_array[i] == 28 ){
+
+      i+=5;// to get acsess to the value of const in the token_array
+      symbolTable[*sizeOfSymbolTable].kind = 1;
+      strcpy(symbolTable[*sizeOfSymbolTable].name, identArray[ident_index++].id);
+      symbolTable[*sizeOfSymbolTable].mark = 1;
+      symbolTable[*sizeOfSymbolTable].val = token_array[i];
+      i++;//updat the index for the next checking 
+      (*sizeOfSymbolTable)++;
+
+    }
+    //if the token is a var. making sure 29 represnts var not number
+    else if((i == 0 && token_array[0] == 29) ||(token_array[i] == 29 && i >0 && token_array[i-1] != 3)){
+
+      do{
+        i++;//// to get acsess to the name of the ident
+        
+        symbolTable[*sizeOfSymbolTable].kind = 2;
+        strcpy(symbolTable[*sizeOfSymbolTable].name, identArray[ident_index++].id);
+        symbolTable[*sizeOfSymbolTable].level = 0;
+        symbolTable[*sizeOfSymbolTable].addr = address++;
+        symbolTable[*sizeOfSymbolTable].mark = 1;
+        (*sizeOfSymbolTable)++;
+        i+=2;
+      }while(token_array[i] == 17);//if the token is a comma means ther is more idents
+
+    }
+  }
+}
+
+
+/******************************************************/
+void printSymbolTable(symbol symbolTable[], int sizeOfSymbolTable){
+
+  printf("Kind | Name        | Value | Level | Address | Mark\n");
+  printf("---------------------------------------------------\n");
+  
+  for(int i = 0; i < sizeOfSymbolTable; i++){
+    
+    printf("%d |", symbolTable[i].kind);
+    
+    for(int j = 0; j < 12 - strlen(symbolTable[i].name); j++){
+      printf(" ");
+    }
+    
+    printf("%s |     %d |", symbolTable[i].name, symbolTable[i].val);
+    if(symbolTable[i].kind == 2)
+      printf("     %d |     %d |", symbolTable[i].level, symbolTable[i].addr);
+    else
+      printf("     - |     - |");
+    printf("     %d\n", symbolTable[i].mark);
+  }
+  
+}
+
+/******************************************************/
 
 int main( int argc, char *argv[]){
 
@@ -587,8 +654,16 @@ int main( int argc, char *argv[]){
 
   printf("\n");
   
-  
 
+  //implemnting symbol table
+  symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
+  int sizeOfSymbolTable = 0;
+
+  SymbolTable(symbolTable, &sizeOfSymbolTable, identArray, sizeOfidentArray, token_array, sizeOftoken_array);
+
+  printf("\n\n");
+  
+  printSymbolTable(symbolTable, sizeOfSymbolTable);
 
 
   //close fp2
@@ -597,3 +672,4 @@ int main( int argc, char *argv[]){
   return 0;
 
 }
+

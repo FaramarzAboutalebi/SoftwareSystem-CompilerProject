@@ -1,2 +1,3 @@
 var call, procedure;
+const k = 3;
 call := procedure + 3.

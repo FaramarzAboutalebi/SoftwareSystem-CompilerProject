@@ -1,19 +1,25 @@
 Source Program:
-var call, procedure;
-call := procedure + 3.
+var x, y;
+begin
+  x := y * 2;
+end.
+
 
 Lexeme Table:
 lexeme      token type
 var         29
-call        2
+x           2
 ,           17
-procedure   2
+y           2
 ;           18
-call        2
+begin       21
+x           2
 :=          20
-procedure   2
-+           4
-3           3
+y           2
+*           6
+2           3
+;           18
+end         22
 .           19
 Token List:
-29 2 call 17 2 procedure 18 2 call 20 2 procedure 4 3 3 19 
+29 2 x 17 2 y 18 21 2 x 20 2 y 6 3 2 18 22 19 
