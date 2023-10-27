@@ -5,7 +5,7 @@
 ### Todo List
 
 - [x] Constant Declaration
-- [ ] Var Declaration
+- [x] Var Declaration
 - [ ] Statement
 - [ ] Condition
 - [ ] Expression
