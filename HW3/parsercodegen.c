@@ -19,6 +19,11 @@
 // Maximum size of the symbol table
 #define MAX_SYMBOL_TABLE_SIZE 500
 
+// Kind Constants
+#define KIND_CONSTANT 1
+#define KIND_VARIABLE 2
+#define KIND_PROCEDURE 3
+
 // file pointer
 FILE *fp2;
 
@@ -86,6 +91,14 @@ typedef struct
 // Global Symbol table
 symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
 int sizeOfSymbolTable = 0;
+
+// Global Identity Array
+stringHolder identArray[MAX_ARRAY_LENGTH];
+int sizeOfidentArray = 0;
+
+// Global Token Array
+int tokenArray[MAX_ARRAY_LENGTH];
+int sizeOftokenArray = 0;
 
 // This function takes the input anf convert it to subString and store them to the subString array which is a sttructure array
 int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString, int sizeOfsubString, int stringIndex)
@@ -505,7 +518,7 @@ int str_to_int(const char *str)
 /******************************************************/
 
 // prints out the token list
-void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString, int token_array[], int *sizeOftoken_arra, stringHolder identArray[], int *sizeOfidentArray)
+void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString, int tokenArray[], int *sizeOftoken_arra, stringHolder identArray[], int *sizeOfidentArray)
 {
 
   printf("Token List:\n");
@@ -516,7 +529,7 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString, in
     // prints valid tokens
     if (subString[i].Token > 0)
     {
-      token_array[(*sizeOftoken_arra)++] = subString[i].Token; //...........
+      tokenArray[(*sizeOftoken_arra)++] = subString[i].Token; //...........
 
       printf("%d ", subString[i].Token);
       fprintf(fp2, "%d ", subString[i].Token); // print to output file
@@ -524,12 +537,12 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString, in
     if (subString[i].Token == 2 || subString[i].Token == 3)
     {
       if (subString[i].Token == 3)
-        token_array[(*sizeOftoken_arra)++] = str_to_int(subString[i].string);
+        tokenArray[(*sizeOftoken_arra)++] = str_to_int(subString[i].string);
       else
       {
 
         strcpy(identArray[(*sizeOfidentArray)].id, subString[i].string);
-        token_array[(*sizeOftoken_arra)++] = *sizeOfidentArray;
+        tokenArray[(*sizeOftoken_arra)++] = *sizeOfidentArray;
         (*sizeOfidentArray)++;
       }
 
@@ -543,7 +556,9 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString, in
 
 /******************************************************/
 
-// implement symbol table
+int i = 0, j = 0, numVars = 0, localAddr = 0, t;
+
+stringHolder temp;
 
 int symbolTableCheck(stringHolder name)
 {
@@ -562,6 +577,7 @@ void addToSymbolTable(int kind, stringHolder name, int value, int addr, int mark
   s.kind = kind;
   strcpy(s.name, name.id);
   s.val = value;
+  s.level = 0;
   s.addr = addr;
   s.mark = mark;
 
@@ -569,94 +585,89 @@ void addToSymbolTable(int kind, stringHolder name, int value, int addr, int mark
   sizeOfSymbolTable++;
 }
 
-void SymbolTable(stringHolder identArray[], int sizeOfidentArray, int token_array[], int sizeOftoken_array)
+void constDeclaration()
 {
-  // const = 1, var = 2, proc = 3
-  // for HW3 we only have const and var
-  // looking for 'const' and 'var' in the toke array
-  // int address = 3;
-  // int ident_index = 0;
-  // for(int i = 0; i < sizeOftoken_arra; i++){
+  do
+  {
+    // Get next token
+    t = tokenArray[++i];
+    if (t != identsym)
+      printf("Error invalid identity\n");
+    if (symbolTableCheck(identArray[j]) != -1)
+      printf("Error token already exists\n");
+    // Save identity name
+    temp = identArray[j++];
+    // Skipping Identity Token
+    i++;
+    // Get next token
+    t = tokenArray[++i];
+    if (t != eqlsym)
+      printf("Error missing equals following name in declaration\n");
+    // Get next token
+    t = tokenArray[++i];
+    if (t != numbersym)
+      printf("Error name not assigned to proper numerical value\n");
+    // Add to symbol table
+    addToSymbolTable(KIND_CONSTANT, temp, tokenArray[++i], 0, 0);
+    t = tokenArray[++i];
+  } while (t == commasym);
 
-  //   //For constants, you must store kind, name and value.
-  //   // if the token is a const. making sure 28 represnts const not number
-  //   if(token_array[i] == 28 ){
+  if (t != semicolonsym)
+    printf("Error missing semi colon!");
 
-  //     i+=5;// to get acsess to the value of const in the token_array
-  //     symbolTable[*sizeOfSymbolTable].kind = 1;
-  //     strcpy(symbolTable[*sizeOfSymbolTable].name, identArray[ident_index++].id);
-  //     symbolTable[*sizeOfSymbolTable].mark = 1;
-  //     symbolTable[*sizeOfSymbolTable].val = token_array[i];
-  //     i++;//updat the index for the next checking
-  //     (*sizeOfSymbolTable)++;
+  // Get next token
+  t = tokenArray[++i];
+}
 
-  //   }
-  //   //if the token is a var. making sure 29 represnts var not number
-  //   else if((i == 0 && token_array[0] == 29) ||(token_array[i] == 29 && i >0 && token_array[i-1] != 3)){
+int varDeclaration()
+{
+  int numVars = 0, t;
 
-  //     do{
-  //       i++;//// to get acsess to the name of the ident
+  do
+  {
+    // Get next token
+    t = tokenArray[++i];
+    numVars++;
+    if (t != identsym)
+      printf("Error: Invalid identity!\n");
+    if (symbolTableCheck(identArray[j]) != -1)
+      printf("Error token already exists\n");
+    // Skipping Identity Token
+    i++;
+    // Add to symbol table
+    addToSymbolTable(KIND_VARIABLE, identArray[j++], 0, localAddr++, 0);
+    // Get next token
+    t = tokenArray[++i];
+  } while (t == commasym);
 
-  //       symbolTable[*sizeOfSymbolTable].kind = 2;
-  //       strcpy(symbolTable[*sizeOfSymbolTable].name, identArray[ident_index++].id);
-  //       symbolTable[*sizeOfSymbolTable].level = 0;
-  //       symbolTable[*sizeOfSymbolTable].addr = address++;
-  //       symbolTable[*sizeOfSymbolTable].mark = 1;
-  //       (*sizeOfSymbolTable)++;
-  //       i+=2;
-  //     }while(token_array[i] == 17);//if the token is a comma means ther is more idents
+  if (t != semicolonsym)
+    printf("Error missing semi colon!");
 
-  //   }
-  // }
+  // Get next token
+  t = tokenArray[++i];
+  return numVars;
+}
 
-  int constant = 1, var = 2, proc = 3;
+// Statement
+// Condition
+// Expression
+// Term
+// ---Factor
+// Factor
 
-  sizeOfSymbolTable = 0;
-
-  int i = 0, j = 0, t;
-
-  stringHolder temp;
-
+void SymbolTable()
+{
   while (i < sizeOfidentArray) // Loop through token array
   {
-    t = token_array[i];
+    t = tokenArray[i];
 
-    // Constant Declaration
     if (t == constsym)
-    {
-      do
-      {
-        // Get next token
-        t = token_array[++i];
-        if (t != identsym)
-          printf("Error invalid identity\n");
-        if (symbolTableCheck(identArray[j]) != -1)
-          printf("Error token already exists\n");
-        // Save identity name
-        temp = identArray[j++];
-        i++;
-        // Get next token
-        t = token_array[++i];
-        if (t != eqlsym)
-          printf("Error missing equals following name in declaration\n");
-        // Get next token
-        t = token_array[++i];
-        if (t != numbersym)
-          printf("Error name not assigned to proper numerical value\n");
-        // Add to symbol table
-        addToSymbolTable(1, temp, token_array[++i], 0, 0);
-      } while (t == commasym);
-    }
+      constDeclaration();
+    if (t == varsym)
+      varDeclaration();
 
     i++; // Increment token array index
   }
-  // Var Declaration
-  // Statement
-  // Condition
-  // Expression
-  // Term
-  // ---Factor
-  // Factor
 }
 
 /******************************************************/
@@ -755,27 +766,18 @@ int main(int argc, char *argv[])
   // call function to print the lexeme table
   LexemeTable(subString, sizeOfsubString);
 
-  // save the tokens in an aray
-  int token_array[MAX_ARRAY_LENGTH];
-  int sizeOftoken_array = 0;
-  // save the idenfier in an array
-  stringHolder identArray[MAX_ARRAY_LENGTH];
-  int sizeOfidentArray = 0;
-
-  // call function to print the token list, and populating the token_array
-  TokenListAndTokenArrayPopulat(subString, sizeOfsubString, token_array, &sizeOftoken_array, identArray, &sizeOfidentArray);
+  // call function to print the token list, and populating the tokenArray
+  TokenListAndTokenArrayPopulat(subString, sizeOfsubString, tokenArray, &sizeOftokenArray, identArray, &sizeOfidentArray);
 
   // print the token array
   printf("Token Array:\n");
-  for (int i = 0; i < sizeOftoken_array; i++)
-  {
-    printf("%d ", token_array[i]);
-  }
+  for (int i = 0; i < sizeOftokenArray; i++)
+    printf("%d ", tokenArray[i]);
 
   printf("\n");
 
-  // implemnting symbol table
-  SymbolTable(identArray, sizeOfidentArray, token_array, sizeOftoken_array);
+  // implementing symbol table
+  SymbolTable();
 
   printf("\n\n");
 

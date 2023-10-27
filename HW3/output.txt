@@ -1,12 +1,24 @@
 Source Program:
-const k = 3;
+const k = 7, jake = 2;
+var abc, efg, hij;
 
 Lexeme Table:
 lexeme      token type
 const       28
 k           2
 =           9
-3           3
+7           3
+,           17
+jake        2
+=           9
+2           3
+;           18
+var         29
+abc         2
+,           17
+efg         2
+,           17
+hij         2
 ;           18
 Token List:
-28 2 k 9 3 3 18 
+28 2 k 9 3 7 17 2 jake 9 3 2 18 29 2 abc 17 2 efg 17 2 hij 18 

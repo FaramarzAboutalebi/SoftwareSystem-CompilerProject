@@ -1,0 +1,2 @@
+const k = 7, jake = 2;
+var abc, efg, hij;
