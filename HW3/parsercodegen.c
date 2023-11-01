@@ -649,6 +649,31 @@ int varDeclaration()
 }
 
 // Statement
+
+void statement()
+{
+
+  int symIdx;
+
+  // Get next token
+  t = tokenArray[++i];
+
+  if (t == identsym)
+  {
+    symIdx = symbolTableCheck(identArray[j]);
+    if (symIdx == -1)
+      printf("Error");
+    if (symbolTable[symIdx].kind != 2) // not var
+      printf("Error");
+    // Get next token
+    t = tokenArray[++i];
+    if (t != becomessym)
+      printf("Error");
+    // Get next token
+    t = tokenArray[++i];
+    }
+}
+
 // Condition
 // Expression
 // Term

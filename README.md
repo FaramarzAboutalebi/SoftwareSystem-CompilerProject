@@ -6,9 +6,8 @@
 
 - [x] Constant Declaration
 - [x] Var Declaration
-- [ ] Statement
-- [ ] Condition
-- [ ] Expression
-- [ ] Term
-- [ ] ---Factor
-- [ ] Factor
+- [x] Statement
+- [x] Condition
+- [x] Expression
+- [x] Term
+- [x] Factor
