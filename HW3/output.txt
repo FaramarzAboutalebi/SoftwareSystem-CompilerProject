@@ -1,24 +1,25 @@
 Source Program:
-const k = 7, jake = 2;
-var abc, efg, hij;
+var x, y;
+begin
+  x := y * 2;
+end.
+
 
 Lexeme Table:
 lexeme      token type
-const       28
-k           2
-=           9
-7           3
+var         29
+x           2
 ,           17
-jake        2
-=           9
+y           2
+;           18
+begin       21
+x           2
+:=          20
+y           2
+*           6
 2           3
 ;           18
-var         29
-abc         2
-,           17
-efg         2
-,           17
-hij         2
-;           18
+end         22
+.           19
 Token List:
-28 2 k 9 3 7 17 2 jake 9 3 2 18 29 2 abc 17 2 efg 17 2 hij 18 
+29 2 x 17 2 y 18 21 2 x 20 2 y 6 3 2 18 22 19 

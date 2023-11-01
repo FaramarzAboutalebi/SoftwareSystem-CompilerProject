@@ -1,0 +1,5 @@
+check: 
+  CONDITION()  : DONE
+  TERM(): DONE
+  FACTOR(): DONE
+  EXPRESSION: DONE

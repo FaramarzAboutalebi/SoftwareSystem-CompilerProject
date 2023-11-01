@@ -107,33 +107,17 @@ typedef enum
   procsym$8 = 30,
   writesym = 31,
   readsym = 32,
-  elsesym = 33
+  elsesym = 33,
+  modsym = 34 //????????????? MOD?????
 } token_type;
 
-// Enum for PL/0 Instructions
-typedef enum
-{
-  LIT = 1,
-  OPR = 2,
-  OPR_RTN = 0,
-  OPR_ADD = 1,
-  OPR_SUB = 2,
-  OPR_MUL = 3,
-  OPR_DIV = 4,
-  OPR_EQL = 5,
-  OPR_NEQ = 6,
-  OPR_LSS = 7,
-  OPR_LEQ = 8,
-  OPR_GTR = 9,
-  OPR_GEQ = 10,
-  LOD = 3,
-  STO = 4,
-  CAL = 5,
-  INC = 6,
-  JMP = 7,
-  JPC = 8,
-  SYS = 9
-} instruction_type;
+// Global variables for PL/0 Instructions
+int LIT = 1, OPR = 2, OPR_RTN = 0, OPR_ADD = 1, OPR_SUB = 2, OPR_MUL = 3, OPR_DIV = 4, OPR_EQL = 5, OPR_NEQ = 6, OPR_LSS = 7, OPR_LEQ = 8, OPR_GTR = 9, OPR_GEQ = 10, OPR_ODD = 11, OPR_MOD = 12, LOD = 3, STO = 4, CAL = 5, INC = 6, JMP = 7, JPC = 8, SYS = 9;
+
+
+void TERM();
+void FACTOR();
+void EXPRESSION();
 
 // struture to store the lexeme and token
 typedef struct
@@ -857,35 +841,52 @@ void FACTOR()
 {
   if (TOKEN == identsym)
   {
-    int symIdx = SYMBOLTABLECHECK(TOKEN);
+    char ident[12];
+
+    //.....
+    GET_TOKEN(); // to get the index of the identifier stored in identArray
+    strcpy(ident, identArray[TOKEN].id);
+    //.....
+    int symIdx = SYMBOLTABLECHECK(ident);
     if (symIdx == -1)
-      printf("Error");
+    {
+      printf("Error");//???????????error()
+      exit(1);
+    }
     if (symbolTable[symIdx].kind == 1)
       emit(LIT, 0, symbolTable[symIdx].val);
-    else
+    else if(symbolTable[symIdx].kind == 2)
       emit(LOD, 0, symbolTable[symIdx].addr);
     GET_TOKEN();
   }
   else if (TOKEN == numbersym)
   {
-    emit(LIT, 0, ); // WHAT M VALUE?
+    //.....
+    GET_TOKEN();// get the value of the number
+    //.....
+    emit(LIT, 0, TOKEN); // LIT 0 VALUE
     GET_TOKEN();
   }
   else if (TOKEN == lparentsym)
   {
     GET_TOKEN();
     EXPRESSION();
-    if (TOKEN != rparentsym)
-      printf("ERORR");
+    if (TOKEN != rparentsym){
+      printf("ERORR"); //??????????????error()
+      exit(1);
+    }
     GET_TOKEN();
   }
   else
   {
     printf("ERROR");
+    exit(1);
   }
 }
 
 /******************************************************/
+
+
 void TERM()
 {
   FACTOR();
@@ -896,70 +897,48 @@ void TERM()
     {
       GET_TOKEN();
       FACTOR();
-      emit(OPR, 0, OPR_MUL);
+      emit(OPR, 0, OPR_MUL); // 2 0 3
     }
     else if (TOKEN == slashsym)
     {
       GET_TOKEN();
       FACTOR();
-      emit(OPR, 0, OPR_DIV);
+      emit(OPR, 0, OPR_DIV); // 2 0 4
     }
     else
     {
       GET_TOKEN();
       FACTOR();
-      emit(OPR, 0, OPR_MOD); // WHAT IS THIS?
+      emit(OPR, 0, OPR_MOD); // 2 0 12 WHAT IS THAT????
     }
   }
 }
 /******************************************************/
 
+//expression ::=  term { ("+"|"-") term}
 void EXPRESSION()
 {
-  if (TOKEN == minussym)
-  {
-    GET_TOKEN();
-    TERM();
-    emit(OPR, 0, OPR_NEG); // WHAT IS THIS?
+  TERM();
 
-    while (TOKEN == plussym || TOKEN == minussym)
-    {
-      if (TOKEN == plussym)
-      {
-        GET_TOKEN();
-        TERM();
-        emit(OPR, 0, OPR_ADD);
-      }
-      else
-      {
-        GET_TOKEN();
-        TERM();
-        emit(OPR, 0, OPR_SUB);
-      }
-    }
-  }
-  else
+  while (TOKEN == plussym || TOKEN == minussym)
   {
     if (TOKEN == plussym)
-      GET_TOKEN();
-
-    while (TOKEN == plussym || TOKEN == minussym)
     {
-      if (TOKEN == plussym)
-      {
-        GET_TOKEN();
-        TERM();
-        emit(OPR, 0, OPR_ADD);
-      }
-      else
-      {
-        GET_TOKEN();
-        TERM();
-        emit(OPR, 0, OPR_SUB);
-      }
+      GET_TOKEN();
+      TERM();
+      emit(OPR, 0, OPR_ADD);
+    }
+    else
+    {
+      GET_TOKEN();
+      TERM();
+      emit(OPR, 0, OPR_SUB);
     }
   }
+
 }
+
+
 
 /******************************************************/
 // condition ::= "odd" expression | expression  rel-op  expression
@@ -979,7 +958,7 @@ void CONDITION()
   {
     GET_TOKEN();
     EXPRESSION();
-    emit(OPR, 0, ); // WHAT IS ODD?
+    emit(OPR, 0, OPR_ODD); // OPR 0 11 or 2 0 11
   }
   else
   {
@@ -988,41 +967,43 @@ void CONDITION()
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_EQL);
+      emit(OPR, 0, OPR_EQL);// OPR 0 5 or 2 0 5
     }
     else if (TOKEN == neqsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_NEQ);
+      emit(OPR, 0, OPR_NEQ); //OPR 0 6 or 2 0 6
     }
     else if (TOKEN == lessym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_LSS);
+      emit(OPR, 0, OPR_LSS);// OPR 0 7 or 2 0 7
     }
     else if (TOKEN == leqsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_LEQ);
+      emit(OPR, 0, OPR_LEQ);//OPR 0 8 or 2 0 8
     }
     else if (TOKEN == gtrsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_GTR);
+      emit(OPR, 0, OPR_GTR);// OPR 0 9 or 2 0 9
     }
     else if (TOKEN == geqsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_GEQ);
+      emit(OPR, 0, OPR_GEQ);// OPR 0 10 or 2 0 10
     }
     else
     {
-      printf("ERROR");
+      printf("ERROR"); // error()  which error???????????
+      exit(1);
+      
     }
   }
 }
