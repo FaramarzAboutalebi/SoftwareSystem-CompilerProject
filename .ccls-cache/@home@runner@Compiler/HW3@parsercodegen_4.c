@@ -617,6 +617,7 @@ void emit(int op, int L, int M)
     printf("\nprogram to long\n");
   else
   {
+    printf("\n\n@@@@@@@@@@@I am in emit\n\n");
     text[cx].op = op;
     text[cx].L = L;
     text[cx].M = M;
@@ -1015,6 +1016,7 @@ void STATEMENT()
 {
   if (TOKEN == identsym)
   {
+    printf("\n\n@@@@@@I am here in statement\n\n");
 
     char ident[12];
 
@@ -1038,13 +1040,14 @@ void STATEMENT()
       error(9);
     }
     GET_TOKEN();
-    // EXPRESSION();
+    EXPRESSION();
     emit(4, 0, symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M
     return;
   }
 
   if (TOKEN == beginsym)
   {
+    printf("\n\n@@@@@@I am here in statement in begin\n\n");
     do
     {
       GET_TOKEN();
@@ -1125,78 +1128,13 @@ void STATEMENT()
   if (TOKEN == writesym)
   {
     GET_TOKEN();
-    // EXPRESSION();
+    EXPRESSION();
     emit(9, 0, 1); // SYS 0 1 or 9 0 1
     return;
   }
 }
 
-// Note: You'll need to define or adapt functions like getNextToken, EXPRESSION, CONDITION, SYMBOLTABLECHECK, and emit for the code to work properly.
 
-// void STATEMENT(){
-
-//   // <statement> ::= <ident> ":=" <expression>
-//   if(TOKEN == identsym){
-
-//     GET_TOKEN(); // pass the index value
-//     GET_TOKEN();// srore the next token in TOKEN
-
-//     if(TOKEN != becomessym)
-//       error(9);
-
-//     GET_TOKEN(); // srore the next token in TOKEN
-//   }//end
-
-//   // <statement> ::= "begin" statement { ";" statement } "end"
-//   else if(TOKEN == beginsym){ //begin
-
-//     GET_TOKEN(); // pass the begin token
-//     STATEMENT(); // call function
-
-//     while(TOKEN == semicolonsym){ // semicolon
-//       GET_TOKEN(); // pass the semicolon token
-//       STATEMENT(); // call function
-
-//     }//end
-
-//     if(TOKEN != endsym)
-//       error(10);
-
-//     GET_TOKEN(); // pass the end token
-
-//   }//end
-
-//   // <statement> ::= "if" condition "then" statement
-//   else if(TOKEN == ifsym){ //if
-
-//     GET_TOKEN(); // pass the if token
-
-//     CONDITION(); // call function
-
-//     if(TOKEN != thensym)
-//       error(11);
-
-//     GET_TOKEN(); // pass the then token
-//     STATEMENT(); // call function
-
-//   }//end
-
-//   // <statement> ::= "while" condition "do" statement
-//   else if(TOKEN == whilesym){ //while
-
-//     GET_TOKEN(); // pass the while token
-
-//     CONDITION(); // call function
-
-//     if(TOKEN != dosym)
-//       error(12);
-
-//     GET_TOKEN(); // pass the do token
-//     STATEMENT(); // call function
-
-//   }//end
-
-// }
 
 /******************************************************/
 
@@ -1213,19 +1151,32 @@ void BLOCK()
   if (TOKEN == varsym)
   {
     int numVars = VAR_DECLARATION(); // call function
+    printf("\n\nnumVars %d\n\n", numVars);
 
-    emit(6, 0, numVars + 2); // emit INC ; +2 for SL DL RN
+    emit(6, 0,  numVars+ 3); // emit INC ; +3 for SL DL RN
   }
 
-  // STATEMENT(); //call function
+  STATEMENT(); //call function
 }
 /******************************************************/
 void PROGRAM()
 {
 
   GET_TOKEN();
+  printf("\n\ntoken: %d\n", TOKEN);
+    
   // printf("\n\n..............................TOKEN: %d\n\n", TOKEN);
   BLOCK();
+
+  // if token != periodsym
+  //   error
+  printf("    \n\ntoken: %d\n", TOKEN);
+  if (TOKEN != periodsym){
+    error(1);
+    // exit(1);        //!!!!!!!!!!!!!!!!!!!
+  }
+  emit(SYS, 0, 3);
+
 }
 
 // ################################################################
@@ -1315,9 +1266,45 @@ int main(int argc, char *argv[])
   PROGRAM();
   printSymbolTable();
 
+  
+  printf("JMP  0  3\n");
   for (int i = 0; i < cx; i++)
   {
-    printf("\n\n%d  %d  %d\n", text[i].op, text[i].L, text[i].M);
+    switch(text[i].op){
+      case 1:
+         printf("LIT");
+        break;
+      case 2:
+        printf("OPR");
+        break;
+      case 3:
+        printf("LOD");
+        break;
+      case 4:
+        printf("STO");
+        break;
+      case 5:
+        printf("CAL");
+        break;
+      case 6:
+        printf("INC");
+        break;
+      case 7:
+        printf("JMP");
+        break;
+      case 8:
+        printf("JPC");
+        break;
+      case 9:
+        printf("SYS");
+        break;
+      default:
+        printf("err");
+        
+      
+      
+    }
+    printf("  %d  %d\n", text[i].L, text[i].M);
   }
 
   // close fp2
