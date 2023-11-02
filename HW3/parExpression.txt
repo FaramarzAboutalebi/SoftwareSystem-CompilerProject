@@ -1,0 +1,10 @@
+const k = 8, c = 7;
+var x, y;
+begin
+  while x - y <= c do
+    x := k + y;
+  if x - 10 <> 7 then 
+    x := c + x;
+  if odd x * 3 - (y - 6) / x then
+    y := c   
+end.

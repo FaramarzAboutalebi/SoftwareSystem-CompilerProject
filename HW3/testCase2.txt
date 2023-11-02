@@ -1,0 +1,6 @@
+const k = 7; 
+var j,h; 
+begin
+  j:=3; 
+  h:=k;
+end.

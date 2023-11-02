@@ -1,0 +1,6 @@
+const k = 8, c = 7;
+var x, y;
+begin
+  while x - y <= c do
+    x := k + y
+end.
