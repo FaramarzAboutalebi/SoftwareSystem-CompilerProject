@@ -1,7 +1,16 @@
 Source Program:
+/*
+  Aouthors' names:
+
+  Faramarz Aboutalebi
+  Ethan Stein
+
+*/
+
 const k = 8, c = 7;
 var x, y;
 begin
+/* lets test the code*/
   while x - y <= c do
     x := k + y;
   if x - 10 <> 7 then 
