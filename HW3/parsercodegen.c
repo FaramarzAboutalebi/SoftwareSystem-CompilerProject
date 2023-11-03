@@ -24,7 +24,7 @@
 typedef struct
 {
   int kind;      // const = 1, var = 2, proc = 3
-  char name[10]; // name up to 11 chars   ???????????????
+  char name[12]; // name up to 11 chars   ???????????????
   int val;       // number (ASCII value)
   int level;     // L level
   int addr;      // M address
@@ -34,7 +34,7 @@ typedef struct
 // struct to save the idenetifiers
 typedef struct
 {
-  char id[MAX_CHARACTER_LENGTH];
+  char id[MAX_ARRAY_LENGTH];
 } stringHolder;
 
 // save the tokens in an aray
@@ -446,8 +446,9 @@ void tokenCreator(subString *subString, int sizeOfsubString)
     // idenfier
     else if (isalpha(subString[i].string[0]) || isdigit(subString[i].string[0]))
     {
-      if (strlen(subString[i].string) > MAX_CHARACTER_LENGTH)
+      if (strlen(subString[i].string) > MAX_CHARACTER_LENGTH){
         subString[i].Token = -2; // Error : Identifiers cannot exceed 11 characters in length
+      }
       else
         subString[i].Token = identsym;
     }
@@ -463,10 +464,10 @@ void tokenCreator(subString *subString, int sizeOfsubString)
 void LexemeTable(subString *subString, int sizeOfsubString)
 {
 
-  //printf("Lexeme Table:\n");
+  // printf("Lexeme Table:\n");
   //fprintf(fp2, "Lexeme Table:\n"); // print to output file
 
-  //printf("lexeme\t\ttoken type\n");
+  // printf("lexeme\t\ttoken type\n");
   //fprintf(fp2, "lexeme      token type\n"); // print to output file
 
   // prints out the lexemes
@@ -476,16 +477,16 @@ void LexemeTable(subString *subString, int sizeOfsubString)
     if (subString[i].Token > 0)
     { // check if token is valid
 
-      //printf("%s", subString[i].string);
+      // printf("%s", subString[i].string);
       //fprintf(fp2, "%s", subString[i].string); // print to output file
 
       // creat the space to build the lexeme table
       int len = strlen(subString[i].string);
-      for (int j = 0; j < 12 - len; j++)
-      {
-        //printf(" ");
-        //fprintf(fp2, " "); // print to output file
-      }
+      // for (int j = 0; j < 12 - len; j++)
+      // {
+      //   // printf(" ");
+      //   //fprintf(fp2, " "); // print to output file
+      // }
     }
     // prints the erorrs
     if (subString[i].Token == -1)
@@ -506,11 +507,11 @@ void LexemeTable(subString *subString, int sizeOfsubString)
       exit(1);
       //fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
     }
-    else
-    {
-      // printf("%d\n", subString[i].Token);
+    // else
+    // {
+    //   printf("%d\n", subString[i].Token);
       //fprintf(fp2, "%d\n", subString[i].Token); // print to output file
-    }
+    // }
   }
 }
 
@@ -615,8 +616,7 @@ void error(int typeOfError)
     break;
   case 16:
     printf("Assignment to constant is not allowed.\n");
-    break;
-     
+    break;     
   default:
     printf("Error: Unknown error type.\n");
     break;
@@ -743,6 +743,7 @@ void GET_TOKEN()
 // ENTER(2, ident, 0, 0, numVars + 2);
 void ENTER(int kind, char *name, int value, int mark, int addr)
 {
+  
   symbol s;
   s.kind = kind;
   strcpy(s.name, name);
@@ -776,7 +777,9 @@ void CONST_DECLARATION()
     //
     GET_TOKEN(); // Although it is not part of the Pseudocode code, because of the instruction of our Token_array, we need it. After the token of identsym we store the index of the identifier stored in identArray
 
+    
     strcpy(ident, identArray[TOKEN].id);
+    
     //.....
 
     // we need to check if it is already in the symbol table
@@ -803,7 +806,10 @@ void CONST_DECLARATION()
     // now the token is the value of the const
     number = TOKEN;
 
+  
+
     ENTER(1, ident, number, 0, 0); // use one for const
+
 
     GET_TOKEN(); // srore the next token in TOKEN
 
@@ -835,6 +841,7 @@ int VAR_DECLARATION()
     //.....
     GET_TOKEN(); // to get the index of the identifier stored in identArray
     strcpy(ident, identArray[TOKEN].id);
+    printf("under var, ident is %s\n", ident);
     //.....
 
     // we need to check if it is already in the symbol table
@@ -874,7 +881,7 @@ void FACTOR()
     if (symbolTable[symIdx].kind == 1)
       emit(LIT, 0, symbolTable[symIdx].val);
     else if(symbolTable[symIdx].kind == 2)
-      emit(LOD, 0, symbolTable[symIdx].addr); //symbolTable[symIdx].level  LLLLLLLLLLLLLL
+      emit(LOD, 0, symbolTable[symIdx].addr); 
     GET_TOKEN();
   }
   else if (TOKEN == numbersym)
@@ -882,7 +889,7 @@ void FACTOR()
     //.....
     GET_TOKEN();// get the value of the number
     //.....
-    emit(LIT, 0, TOKEN); // LIT 0 VALUE   LLLLLLLLLLLLLL
+    emit(LIT, 0, TOKEN); // LIT 0 VALUE   
     GET_TOKEN();
   }
   else if (TOKEN == lparentsym)
@@ -897,7 +904,7 @@ void FACTOR()
   }
   else
   {
-    error(20);// Unknown error type
+    error(15);// 
   }
 }
 
@@ -1029,7 +1036,7 @@ void STATEMENT()
     if (symbolTable[symIdx].kind != 2)
     { // not a var
 
-      error(16); //JJJJJJjjjjjjjjjjjjjjjjjjjjjjj
+      error(8); 
     }
     GET_TOKEN();
     if (TOKEN != becomessym)
@@ -1085,9 +1092,9 @@ void STATEMENT()
     }
     GET_TOKEN();
     int jpcIdx = cx;
-    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0   symbolTable[jpcIdx].level  LLLLLLLLLLLLLL
+    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0   
     STATEMENT();
-    emit(JMP, 0, loopIdx*3); // jmp 0 loopIdx or 7 0 loopIdx   symbolTable[loopIdx].level  LLLLLLLLLLLLLL
+    emit(JMP, 0, loopIdx*3); // jmp 0 loopIdx or 7 0 loopIdx   
     text[jpcIdx].M = cx*3;
     return;
   }
@@ -1113,7 +1120,7 @@ void STATEMENT()
     }
     if (symbolTable[symIdx].kind != 2)
     {           // not a var
-      error(8); //jjjjjjjjjjjjjjjjjjjjjjjjjjj
+      error(8); 
     }
     GET_TOKEN();
     emit(9, 0, 2); // SYS 0 2 or 9 0 2
@@ -1236,7 +1243,7 @@ int main(int argc, char *argv[])
   //fprintf(fp2, "\n\n"); // print to file
 
   // call function to print the lexeme table
-  // LexemeTable(subString, sizeOfsubString);
+  LexemeTable(subString, sizeOfsubString);
 
   // call function to populating the token_array
   TokenListAndTokenArrayPopulat(subString, sizeOfsubString);

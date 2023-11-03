@@ -1,48 +1,51 @@
 case 1:
-  printf("Error: Program must end with period.\n");
+  printf("Error: Program must end with period.\n");   :)))))
   break;
-case 2:
+case 2:         :)))))))))))))
   printf("Error: Const, var, and read keywords must be followed by identifier.\n");
   break;
-case 3:
+case 3:         :)))))))))))))
   printf("Error: Symbol name has already been declared.\n");
   break;
-case 4:
+case 4:         :)))))))))))))
   printf("Error: Constants must be assigned with =.\n");
   break;
-case 5:
+case 5:         :)))))))))))))
   printf("Error: Constants must be assigned an integer value.\n");
   break;
-case 6:
+case 6:         :)))))))))))))
   printf("Error: Constant and variable declarations must be followed by a semicolon.\n");
   break;
-case 7:
+case 7:         :)))))))))))))
   printf("Error: Undeclared identifier.\n");
   break;
-case 8:
+case 8:         :)))))))))))))
   printf("Error: Only variable values may be altered.\n");
   break;
-case 9:
+case 9:         :)))))))))))))
   printf("Error: Assignment statements must use :=.\n");
   break;
-case 10:
+case 10:         :)))))))))))))
   printf("Error: Begin must be followed by end.\n");
   break;
-case 11:
+case 11:         :)))))))))))))
   printf("Error: If must be followed by then.\n");
   break;
-case 12:
+case 12:         :)))))))))))))
   printf("Error: While must be followed by do.\n");
   break;
-case 13:
+case 13:         :)))))))))))))
   printf("Error: Condition must contain comparison operator.\n");
   break;
-case 14:
+case 14:         :)))))))))))))
   printf("Error: Right parenthesis must follow left parenthesis.\n");
   break;
-case 15:
+case 15:         :)))))))))))))
   printf("Error: Arithmetic equations must contain operands, parentheses, numbers, or symbols.\n");
   break;
+case 16:
+  printf("Assignment to constant is not allowed.\n");
+  break; 
 default:
   printf("Error: Unknown error type.\n");
   break;

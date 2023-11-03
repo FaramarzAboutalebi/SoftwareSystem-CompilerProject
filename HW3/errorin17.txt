@@ -1,0 +1,6 @@
+const x = 7;
+var IamGoingToTurnIn, y;
+begin
+  IamGoingToTurnIn := 28;
+  y := IamGoingToTurnIn + x
+end.

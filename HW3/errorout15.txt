@@ -1,0 +1,1 @@
+Error: Arithmetic equations must contain operands, parentheses, numbers, or symbols.
