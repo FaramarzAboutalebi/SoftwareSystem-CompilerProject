@@ -62,11 +62,11 @@ typedef struct
   int M;
 } instruction;
 
-//????????????????????????????????????????
+
 instruction text[MAX_ARRAY_LENGTH];
 
 int cx = 0;           // size of the text array
-int CODE_SIZE = 1000; //??????????????????????????????????????
+int CODE_SIZE = 1000; 
 // ############################
 
 // file pointer
@@ -463,10 +463,10 @@ void tokenCreator(subString *subString, int sizeOfsubString)
 void LexemeTable(subString *subString, int sizeOfsubString)
 {
 
-  printf("Lexeme Table:\n");
+  //printf("Lexeme Table:\n");
   //fprintf(fp2, "Lexeme Table:\n"); // print to output file
 
-  printf("lexeme\t\ttoken type\n");
+  //printf("lexeme\t\ttoken type\n");
   //fprintf(fp2, "lexeme      token type\n"); // print to output file
 
   // prints out the lexemes
@@ -476,14 +476,14 @@ void LexemeTable(subString *subString, int sizeOfsubString)
     if (subString[i].Token > 0)
     { // check if token is valid
 
-      printf("%s", subString[i].string);
+      //printf("%s", subString[i].string);
       //fprintf(fp2, "%s", subString[i].string); // print to output file
 
       // creat the space to build the lexeme table
       int len = strlen(subString[i].string);
       for (int j = 0; j < 12 - len; j++)
       {
-        printf(" ");
+        //printf(" ");
         //fprintf(fp2, " "); // print to output file
       }
     }
@@ -491,21 +491,24 @@ void LexemeTable(subString *subString, int sizeOfsubString)
     if (subString[i].Token == -1)
     {
       printf("Error : Number too long.\n");
+      exit(1);
       //fprintf(fp2, "Error : Number too long.\n"); // print to output file
     }
     else if (subString[i].Token == -2)
     {
       printf("Error : Name too long.\n");
+      exit(1);
       //fprintf(fp2, "Error : Name too long.\n"); // print to
     }
     else if (subString[i].Token == -3)
     {
       printf("Error : Invalid Symbols.\n");
+      exit(1);
       //fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
     }
     else
     {
-      printf("%d\n", subString[i].Token);
+      // printf("%d\n", subString[i].Token);
       //fprintf(fp2, "%d\n", subString[i].Token); // print to output file
     }
   }
@@ -610,6 +613,10 @@ void error(int typeOfError)
   case 15:
     printf("Error: Arithmetic equations must contain operands, parentheses, numbers, or symbols.\n");
     break;
+  case 16:
+    printf("Assignment to constant is not allowed.\n");
+    break;
+     
   default:
     printf("Error: Unknown error type.\n");
     break;
@@ -867,7 +874,7 @@ void FACTOR()
     if (symbolTable[symIdx].kind == 1)
       emit(LIT, 0, symbolTable[symIdx].val);
     else if(symbolTable[symIdx].kind == 2)
-      emit(LOD, 0, symbolTable[symIdx].addr);
+      emit(LOD, 0, symbolTable[symIdx].addr); //symbolTable[symIdx].level  LLLLLLLLLLLLLL
     GET_TOKEN();
   }
   else if (TOKEN == numbersym)
@@ -875,7 +882,7 @@ void FACTOR()
     //.....
     GET_TOKEN();// get the value of the number
     //.....
-    emit(LIT, 0, TOKEN); // LIT 0 VALUE
+    emit(LIT, 0, TOKEN); // LIT 0 VALUE   LLLLLLLLLLLLLL
     GET_TOKEN();
   }
   else if (TOKEN == lparentsym)
@@ -890,7 +897,7 @@ void FACTOR()
   }
   else
   {
-    error(16);// Unknown error type
+    error(20);// Unknown error type
   }
 }
 
@@ -1022,7 +1029,7 @@ void STATEMENT()
     if (symbolTable[symIdx].kind != 2)
     { // not a var
 
-      error(8); //JJJJJJjjjjjjjjjjjjjjjjjjjjjjj
+      error(16); //JJJJJJjjjjjjjjjjjjjjjjjjjjjjj
     }
     GET_TOKEN();
     if (TOKEN != becomessym)
@@ -1078,9 +1085,9 @@ void STATEMENT()
     }
     GET_TOKEN();
     int jpcIdx = cx;
-    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0
+    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0   symbolTable[jpcIdx].level  LLLLLLLLLLLLLL
     STATEMENT();
-    emit(JMP, 0, loopIdx*3); // jmp 0 loopIdx or 7 0 loopIdx
+    emit(JMP, 0, loopIdx*3); // jmp 0 loopIdx or 7 0 loopIdx   symbolTable[loopIdx].level  LLLLLLLLLLLLLL
     text[jpcIdx].M = cx*3;
     return;
   }
@@ -1294,6 +1301,9 @@ int main(int argc, char *argv[])
     fprintf(fp2, "%d %d %d\n", text[i].op, text[i].L, text[i].M);
   }
 
+  //setting marks to 1
+  for(int i = 0; i < sizeOfSymbolTable; i++)
+    symbolTable[i].mark = 1;
   printSymbolTable();
 
   // close fp2
