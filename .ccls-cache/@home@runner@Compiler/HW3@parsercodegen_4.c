@@ -468,10 +468,10 @@ void LexemeTable(subString *subString, int sizeOfsubString)
 {
 
   printf("Lexeme Table:\n");
-  fprintf(fp2, "Lexeme Table:\n"); // print to output file
+  //fprintf(fp2, "Lexeme Table:\n"); // print to output file
 
   printf("lexeme\t\ttoken type\n");
-  fprintf(fp2, "lexeme      token type\n"); // print to output file
+  //fprintf(fp2, "lexeme      token type\n"); // print to output file
 
   // prints out the lexemes
   for (int i = 0; i < sizeOfsubString; i++)
@@ -481,36 +481,36 @@ void LexemeTable(subString *subString, int sizeOfsubString)
     { // check if token is valid
 
       printf("%s", subString[i].string);
-      fprintf(fp2, "%s", subString[i].string); // print to output file
+      //fprintf(fp2, "%s", subString[i].string); // print to output file
 
       // creat the space to build the lexeme table
       int len = strlen(subString[i].string);
       for (int j = 0; j < 12 - len; j++)
       {
         printf(" ");
-        fprintf(fp2, " "); // print to output file
+        //fprintf(fp2, " "); // print to output file
       }
     }
     // prints the erorrs
     if (subString[i].Token == -1)
     {
       printf("Error : Number too long.\n");
-      fprintf(fp2, "Error : Number too long.\n"); // print to output file
+      //fprintf(fp2, "Error : Number too long.\n"); // print to output file
     }
     else if (subString[i].Token == -2)
     {
       printf("Error : Name too long.\n");
-      fprintf(fp2, "Error : Name too long.\n"); // print to
+      //fprintf(fp2, "Error : Name too long.\n"); // print to
     }
     else if (subString[i].Token == -3)
     {
       printf("Error : Invalid Symbols.\n");
-      fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
+      //fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
     }
     else
     {
       printf("%d\n", subString[i].Token);
-      fprintf(fp2, "%d\n", subString[i].Token); // print to output file
+      //fprintf(fp2, "%d\n", subString[i].Token); // print to output file
     }
   }
 }
@@ -544,6 +544,19 @@ int str_to_int(const char *str)
   }
 
   return result * sign;
+}
+
+// return the length of the number
+int getLength(int num) {
+    if(num == 0)
+      return 1;
+    int digits = 0;
+    int length = 0;
+    while(num > 0) {
+        length++;
+        num /= 10;
+    }
+    return length;
 }
 
 // ############################################
@@ -641,7 +654,7 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
 {
 
   printf("Token List:\n");
-  fprintf(fp2, "Token List:\n"); // print to output file
+  //fprintf(fp2, "Token List:\n"); // print to output file
 
   for (int i = 0; i < sizeOfsubString; i++)
   {
@@ -651,7 +664,7 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
       token_array[(sizeOftoken_arra)++] = subString[i].Token; //...........
 
       printf("%d ", subString[i].Token);
-      fprintf(fp2, "%d ", subString[i].Token); // print to output file
+      //fprintf(fp2, "%d ", subString[i].Token); // print to output file
     }
     if (subString[i].Token == 2 || subString[i].Token == 3)
     {
@@ -666,11 +679,11 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
       }
 
       printf("%s ", subString[i].string);
-      fprintf(fp2, "%s ", subString[i].string); // print to output file
+      //fprintf(fp2, "%s ", subString[i].string); // print to output file
     }
   }
   printf("\n");
-  fprintf(fp2, "\n"); // print to output file
+  //fprintf(fp2, "\n"); // print to output file
 }
 
 /******************************************************/
@@ -1067,14 +1080,14 @@ void STATEMENT()
     GET_TOKEN();
     CONDITION();
     int jpcIdx = cx; // cureent text(code) index
-    emit(8, 0, 0);   // JPC 0 0 or 8 0 0
+    emit(JPC, 0, 0);   // JPC 0 0 or 8 0 0
     if (TOKEN != thensym)
     {
       error(11);
     }
     GET_TOKEN();
     STATEMENT();
-    text[jpcIdx].M = cx;
+    text[jpcIdx].M = cx*3;
     return;
   }
 
@@ -1089,10 +1102,10 @@ void STATEMENT()
     }
     GET_TOKEN();
     int jpcIdx = cx;
-    emit(8, 0, 0); // JPC 0 0 or 8 0 0
+    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0
     STATEMENT();
-    emit(7, 0, loopIdx); // jmp 0 loopIdx or 7 0 loopIdx
-    text[jpcIdx].M = cx;
+    emit(JMP, 0, loopIdx*3); // jmp 0 loopIdx or 7 0 loopIdx
+    text[jpcIdx].M = cx*3;
     return;
   }
 
@@ -1226,11 +1239,11 @@ int main(int argc, char *argv[])
 
   // print the source code
   printf("Source Program:\n");
-  fprintf(fp2, "Source Program:\n"); // print to file
+  //fprintf(fp2, "Source Program:\n"); // print to file
   for (int i = 0; i < sizeOfinputArr; i++)
   {
     printf("%c", inputArr[i]);
-    fprintf(fp2, "%c", inputArr[i]); // print to file
+    //fprintf(fp2, "%c", inputArr[i]); // print to file
   }
 
   // arrTracker
@@ -1244,7 +1257,7 @@ int main(int argc, char *argv[])
   tokenCreator(subString, sizeOfsubString); // call function
 
   printf("\n\n");
-  fprintf(fp2, "\n\n"); // print to file
+  //fprintf(fp2, "\n\n"); // print to file
 
   // call function to print the lexeme table
   LexemeTable(subString, sizeOfsubString);
@@ -1263,13 +1276,18 @@ int main(int argc, char *argv[])
 
   // implemnting symbol table
 
+  // add jump 0 3 to the array
+  emit(JMP, 0, 3);
   PROGRAM();
   printSymbolTable();
 
   
-  printf("JMP  0  3\n");
+  printf("line     op    l    m\n");
   for (int i = 0; i < cx; i++)
   {
+    for(int j=0; j< 4 - getLength(i); j++)
+      printf(" ");
+    printf("%d     ", i);
     switch(text[i].op){
       case 1:
          printf("LIT");
@@ -1304,11 +1322,12 @@ int main(int argc, char *argv[])
       
       
     }
-    printf("  %d  %d\n", text[i].L, text[i].M);
+    printf("   %d    %d\n", text[i].L, text[i].M);
+    fprintf(fp2, "%d %d %d\n", text[i].op, text[i].L, text[i].M);
   }
 
   // close fp2
-  fclose(fp2);
+  //fclose(fp2);
 
   return 0;
 }

@@ -1,6 +1,9 @@
 const k = 8, c = 7;
 var x, y;
 begin
+/* Let's test your while and if implementations. *******/
   while x - y <= c do
-    x := k + y
+    x := k + y;
+  if x / (6+y) <> 50 then
+    y := 3 * k
 end.
