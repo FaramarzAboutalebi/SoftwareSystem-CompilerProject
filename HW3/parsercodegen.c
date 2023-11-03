@@ -1105,10 +1105,10 @@ void STATEMENT()
     }
     if (symbolTable[symIdx].kind != 2)
     {           // not a var
-      error(8); //???????????????????
+      error(8); //jjjjjjjjjjjjjjjjjjjjjjjjjjj
     }
     GET_TOKEN();
-    emit(9, 0, 2);                        // SYS 0 2 or 9 0 2
+    emit(9, 0, 2); // SYS 0 2 or 9 0 2
     emit(4, 0, symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
     return;
   }

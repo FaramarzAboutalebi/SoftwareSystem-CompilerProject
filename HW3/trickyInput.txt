@@ -1,2 +1,3 @@
 - do we need to print out the output from lexical error detector from last project or We have to comment them
 - is that Ok to just comment the parts of HW2 that we do not need them in HW3 instead of removing them
+- empty?
