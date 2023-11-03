@@ -945,17 +945,6 @@ void EXPRESSION()
 
 
 /******************************************************/
-// condition ::= "odd" expression | expression  rel-op  expression
-// rel-op ::= "="|“<>"|"<"|"<="|">"|">=“
-
-// int isRel_op(int token){
-
-//   if(TOKEN == eqlsym || TOKEN == neqsym || TOKEN == lessym || TOKEN == leqsym || TOKEN == gtrsym || TOKEN == geqsym)
-//     return 1;
-//   return 0;
-
-// }
-
 void CONDITION()
 {
   if (TOKEN == oddsym)
@@ -1005,9 +994,7 @@ void CONDITION()
     }
     else
     {
-      printf("ERROR"); // error()  which error???????????
-      exit(1);
-      
+      error(13);
     }
   }
 }
@@ -1019,8 +1006,7 @@ void STATEMENT()
 {
   if (TOKEN == identsym)
   {
-    printf("\n\n@@@@@@I am here in statement\n\n");
-
+  
     char ident[12];
 
     GET_TOKEN(); // Get next token
@@ -1035,7 +1021,7 @@ void STATEMENT()
     if (symbolTable[symIdx].kind != 2)
     { // not a var
 
-      error(8); //???????????????????
+      error(8); //JJJJJJjjjjjjjjjjjjjjjjjjjjjjj
     }
     GET_TOKEN();
     if (TOKEN != becomessym)
@@ -1050,7 +1036,6 @@ void STATEMENT()
 
   if (TOKEN == beginsym)
   {
-    printf("\n\n@@@@@@I am here in statement in begin\n\n");
     do
     {
       GET_TOKEN();
