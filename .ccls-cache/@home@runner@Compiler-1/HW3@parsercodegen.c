@@ -626,7 +626,7 @@ void emit(int op, int L, int M)
     printf("\nprogram to long\n");
   else
   {
-    printf("\n\n@@@@@@@@@@@I am in emit\n\n");
+    
     text[cx].op = op;
     text[cx].L = L;
     text[cx].M = M;
@@ -647,7 +647,7 @@ void emit(int op, int L, int M)
 void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
 {
 
-  printf("Token List:\n");
+  // printf("Token List:\n");
   //fprintf(fp2, "Token List:\n"); // print to output file
 
   for (int i = 0; i < sizeOfsubString; i++)
@@ -657,7 +657,7 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
     {
       token_array[(sizeOftoken_arra)++] = subString[i].Token; //...........
 
-      printf("%d ", subString[i].Token);
+      // printf("%d ", subString[i].Token);
       //fprintf(fp2, "%d ", subString[i].Token); // print to output file
     }
     if (subString[i].Token == 2 || subString[i].Token == 3)
@@ -672,17 +672,18 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
         (sizeOfidentArray)++;
       }
 
-      printf("%s ", subString[i].string);
+      // printf("%s ", subString[i].string);
       //fprintf(fp2, "%s ", subString[i].string); // print to output file
     }
   }
-  printf("\n");
+  // printf("\n");
   //fprintf(fp2, "\n"); // print to output file
 }
 
 /******************************************************/
 void printSymbolTable()
 {
+  printf("\nSymbol Table:\n\n");
 
   printf("Kind | Name        | Value | Level | Address | Mark\n");
   printf("---------------------------------------------------\n");
@@ -1139,7 +1140,6 @@ void BLOCK()
   if (TOKEN == varsym)
   {
     int numVars = VAR_DECLARATION(); // call function
-    printf("\n\nnumVars %d\n\n", numVars);
 
     emit(6, 0,  numVars+ 3); // emit INC ; +3 for SL DL RN
   }
@@ -1151,17 +1151,11 @@ void PROGRAM()
 {
 
   GET_TOKEN();
-  printf("\n\ntoken: %d\n", TOKEN);
     
-  // printf("\n\n..............................TOKEN: %d\n\n", TOKEN);
   BLOCK();
 
-  // if token != periodsym
-  //   error
-  printf("    \n\ntoken: %d\n", TOKEN);
   if (TOKEN != periodsym){
     error(1);
-    // exit(1);        //!!!!!!!!!!!!!!!!!!!
   }
   emit(SYS, 0, 3);
 
@@ -1213,13 +1207,13 @@ int main(int argc, char *argv[])
   fp2 = fopen("output.txt", "w");
 
   // print the source code
-  printf("Source Program:\n");
-  //fprintf(fp2, "Source Program:\n"); // print to file
-  for (int i = 0; i < sizeOfinputArr; i++)
-  {
-    printf("%c", inputArr[i]);
-    //fprintf(fp2, "%c", inputArr[i]); // print to file
-  }
+  // printf("Source Program:\n");
+  // //fprintf(fp2, "Source Program:\n"); // print to file
+  // for (int i = 0; i < sizeOfinputArr; i++)
+  // {
+  //   printf("%c", inputArr[i]);
+  //   //fprintf(fp2, "%c", inputArr[i]); // print to file
+  // }
 
   // arrTracker
   // arrTracker is the last index of the array
@@ -1231,31 +1225,30 @@ int main(int argc, char *argv[])
   // call function to generate token for eac subString
   tokenCreator(subString, sizeOfsubString); // call function
 
-  printf("\n\n");
+  // printf("\n\n");
   //fprintf(fp2, "\n\n"); // print to file
 
   // call function to print the lexeme table
-  LexemeTable(subString, sizeOfsubString);
+  // LexemeTable(subString, sizeOfsubString);
 
-  // call function to print the token list, and populating the token_array
+  // call function to populating the token_array
   TokenListAndTokenArrayPopulat(subString, sizeOfsubString);
 
   // print the token array
-  printf("Token Array:\n");
-  for (int i = 0; i < sizeOftoken_arra; i++)
-  {
-    printf("%d ", token_array[i]);
-  }
+  // printf("Token Array:\n");
+  // for (int i = 0; i < sizeOftoken_arra; i++)
+  // {
+  //   printf("%d ", token_array[i]);
+  // }
 
-  printf("\n\n");
+  // printf("\n\n");
 
   // implemnting symbol table
 
   // add jump 0 3 to the array
   emit(JMP, 0, 3);
   PROGRAM();
-  printSymbolTable();
-
+  
   
   printf("line     op    l    m\n");
   for (int i = 0; i < cx; i++)
@@ -1301,8 +1294,10 @@ int main(int argc, char *argv[])
     fprintf(fp2, "%d %d %d\n", text[i].op, text[i].L, text[i].M);
   }
 
+  printSymbolTable();
+
   // close fp2
-  //fclose(fp2);
+  fclose(fp2);
 
   return 0;
 }
