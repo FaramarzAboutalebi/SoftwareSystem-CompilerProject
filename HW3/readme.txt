@@ -1,3 +1,8 @@
+#Aouthors' names:
+
+- Faramarz Aboutalebi
+- Ethan Stein
+
 # Running The Program
 
 - In order to run this program GCC Compiler must be installed.
