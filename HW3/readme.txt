@@ -2,11 +2,11 @@
 
 - In order to run this program GCC Compiler must be installed.
 
-- Whilst in the same directory as `parsecodegen.c` run the 
+- Whilst in the same directory as `parsercodegen.c` run the 
   following command in order to compile: 
   
-            gcc -o parsecodegen parsecodegen.c
+            gcc -o parsercodegen parsercodegen.c
 
-- Whilst in the same directory as `parsecodegen.exe` run the
+- Whilst in the same directory as `parsercodegen.exe` run the
   following command in order to execute: 
-            ./parsecodegen {YOUR INPUT FILE NAME}.txt
+            ./parsercodegen {YOUR INPUT FILE NAME}.txt
