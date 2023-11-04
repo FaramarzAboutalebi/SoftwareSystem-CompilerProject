@@ -1,0 +1,22 @@
+Line    OP    L    M
+  0    JMP    0    3
+  1    INC    0    8
+  2    LOD    0    5
+  3    LOD    0    3
+  4    OPR    0    1
+  5    LOD    0    6
+  6    OPR    0    1
+  7    LOD    0    7
+  8    OPR    0    1
+  9    STO    0    4
+ 10    SYS    0    3
+
+Symbol Table:
+
+Kind | Name        | Value | Level | Address | Mark
+---------------------------------------------------
+   2 |   procedure |     0 |     0 |     3 |     1
+   2 |        call |     0 |     0 |     4 |     1
+   2 |        else |     0 |     0 |     5 |     1
+   2 |        ifel |     0 |     0 |     6 |     1
+   2 |         mod |     0 |     0 |     7 |     1
