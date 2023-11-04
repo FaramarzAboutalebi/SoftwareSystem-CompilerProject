@@ -590,7 +590,7 @@ void error(int typeOfError)
     printf("Error: Constant and variable declarations must be followed by a semicolon.\n");
     break;
   case 7:
-    printf("Error: Undeclared identifier.\n");
+    printf("Error: Undeclared identifier %s\n", identArray[TOKEN].id);
     break;
   case 8:
     printf("Error: Only variable values may be altered.\n");
@@ -896,6 +896,7 @@ void FACTOR() {
     int symIdx = SYMBOLTABLECHECK(ident);
     if (symIdx == -1) {
       error(7); // Error: Undeclared identifier
+
     }
 
     // If the symbol is a constant, emit a LIT instruction
@@ -1066,7 +1067,8 @@ void STATEMENT()
     int symIdx = SYMBOLTABLECHECK(ident);
     if (symIdx == -1)//make sure the identifier decalared
     {
-      error(7);
+      error(7); // Error: Undeclared identifier
+   
     }
     if (symbolTable[symIdx].kind != 2)
     { // not a var
@@ -1169,7 +1171,7 @@ void STATEMENT()
     int symIdx = SYMBOLTABLECHECK(ident);
     if (symIdx == -1)
     {
-      error(7);
+      error(7); // Error: Undeclared identifier
     }
     if (symbolTable[symIdx].kind != 2)// make sure that the identifier is a var
     {           // not a var

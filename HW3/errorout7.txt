@@ -1,1 +1,1 @@
-Error: Undeclared identifier.
+Error: Undeclared identifier y
