@@ -5,75 +5,62 @@
   Ethan Stein
 
 */
-//...............
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX_ARRAY_LENGTH 1000
-// Maximum length of the number
-#define MAX_DIGITS_LENGTH 5
-// Maximum length of the
-#define MAX_CHARACTER_LENGTH 11
-// Maximum size of the symbol table
-#define MAX_SYMBOL_TABLE_SIZE 500
+#define MAX_ARRAY_LENGTH 1000     // Maximum amount of tokens that can be stored
+#define MAX_DIGITS_LENGTH 5       // Maximum length of the number
+#define MAX_CHARACTER_LENGTH 11   // Maximum length of the
+#define MAX_SYMBOL_TABLE_SIZE 500 // Maximum size of the symbol table
 
-// #############################
-//  data structure for the symbol.
-typedef struct
+typedef struct // Data structure for symbol table entries
 {
   int kind;      // const = 1, var = 2, proc = 3
-  char name[12]; // name up to 11 chars   ???????????????
+  char name[12]; // name up to 11 chars, 12 to include '\0' null pointer
   int val;       // number (ASCII value)
   int level;     // L level
   int addr;      // M address
   int mark;      // to indicate unavailable or deleted
 } symbol;
 
-// struct to save the idenetifiers
-typedef struct
+typedef struct // Identifier Name Data Structure
 {
   char id[MAX_ARRAY_LENGTH];
 } stringHolder;
 
-// save the tokens in an aray
-int token_array[MAX_ARRAY_LENGTH];
-int sizeOftoken_arra = 0; // size of the array of tokens
+int token_array[MAX_ARRAY_LENGTH]; // Token Array
+int sizeOftoken_arra = 0;          // Integer representing current size of token array
 
-// save the idenfier in an array
-stringHolder identArray[MAX_ARRAY_LENGTH];
-int sizeOfidentArray = 0; // size of the array of identifiers
+stringHolder identArray[MAX_ARRAY_LENGTH]; // Array for saving identifier names
+int sizeOfidentArray = 0;                  // Integer representing current number of identifiers
 
-int tp = 0; // symbol table pointer; increace when inserting a new data
-int seek;
+int tp = 0; // Symbol table pointer
+int seek;   // Integer used to seek through symbol table
 
 symbol symbolTable[MAX_SYMBOL_TABLE_SIZE];
 int sizeOfSymbolTable = 0;
 
-int currentToken = -1; // index of the current token to traverse in token_array
-int TOKEN;
-int numVars = 0; // vaiables counter
+int currentToken = -1; // Index of current token
+int TOKEN;             // Current token
+int numVars = 0;       // Tracks number of variables
 
-typedef struct
+typedef struct // Data structure representing a PL/0 ISA Operation
 {
-  int op;
-  int L;
+  int op; // Operation
+  int L;  // Level
   int M;
 } instruction;
 
+instruction text[MAX_ARRAY_LENGTH]; // Array to save text of program
 
-instruction text[MAX_ARRAY_LENGTH];
+int cx = 0; // Integer representing current size of Text Array
 
-int cx = 0;           // size of the text array
-int CODE_SIZE = 1000; 
-// ############################
+FILE *fp2; // File Pointer
 
-// file pointer
-FILE *fp2;
-
-// adding $8 to the to hide them callsym and procsym????????
-typedef enum
+typedef enum // Enum for token types
 {
   oddsym = 1,
   identsym = 2,
@@ -112,7 +99,6 @@ typedef enum
 
 // Global variables for PL/0 Instructions
 int LIT = 1, OPR = 2, OPR_RTN = 0, OPR_ADD = 1, OPR_SUB = 2, OPR_MUL = 3, OPR_DIV = 4, OPR_EQL = 5, OPR_NEQ = 6, OPR_LSS = 7, OPR_LEQ = 8, OPR_GTR = 9, OPR_GEQ = 10, OPR_ODD = 11, LOD = 3, STO = 4, CAL = 5, INC = 6, JMP = 7, JPC = 8, SYS = 9, errorOffOrOn = 0;
-
 
 void TERM();
 void FACTOR();
@@ -402,7 +388,7 @@ void tokenCreator(subString *subString, int sizeOfsubString)
     // else if (strcmp(subString[i].string, "call") == 0)
     // {
     //   subString[i].Token = callsym;
-      
+
     // }
     // const
     else if (strcmp(subString[i].string, "const") == 0)
@@ -446,7 +432,8 @@ void tokenCreator(subString *subString, int sizeOfsubString)
     // idenfier
     else if (isalpha(subString[i].string[0]) || isdigit(subString[i].string[0]))
     {
-      if (strlen(subString[i].string) > MAX_CHARACTER_LENGTH){
+      if (strlen(subString[i].string) > MAX_CHARACTER_LENGTH)
+      {
         subString[i].Token = -2; // Error : Identifiers cannot exceed 11 characters in length
       }
       else
@@ -465,10 +452,10 @@ void LexemeTable(subString *subString, int sizeOfsubString)
 {
 
   // printf("Lexeme Table:\n");
-  //fprintf(fp2, "Lexeme Table:\n"); // print to output file
+  // fprintf(fp2, "Lexeme Table:\n"); // print to output file
 
   // printf("lexeme\t\ttoken type\n");
-  //fprintf(fp2, "lexeme      token type\n"); // print to output file
+  // fprintf(fp2, "lexeme      token type\n"); // print to output file
 
   // prints out the lexemes
   for (int i = 0; i < sizeOfsubString; i++)
@@ -478,7 +465,7 @@ void LexemeTable(subString *subString, int sizeOfsubString)
     { // check if token is valid
 
       // printf("%s", subString[i].string);
-      //fprintf(fp2, "%s", subString[i].string); // print to output file
+      // fprintf(fp2, "%s", subString[i].string); // print to output file
 
       // creat the space to build the lexeme table
       int len = strlen(subString[i].string);
@@ -493,24 +480,24 @@ void LexemeTable(subString *subString, int sizeOfsubString)
     {
       printf("Error : Number too long.\n");
       exit(1);
-      //fprintf(fp2, "Error : Number too long.\n"); // print to output file
+      // fprintf(fp2, "Error : Number too long.\n"); // print to output file
     }
     else if (subString[i].Token == -2)
     {
       printf("Error : Name too long.\n");
       exit(1);
-      //fprintf(fp2, "Error : Name too long.\n"); // print to
+      // fprintf(fp2, "Error : Name too long.\n"); // print to
     }
     else if (subString[i].Token == -3)
     {
       printf("Error : Invalid Symbols.\n");
       exit(1);
-      //fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
+      // fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
     }
     // else
     // {
     //   printf("%d\n", subString[i].Token);
-      //fprintf(fp2, "%d\n", subString[i].Token); // print to output file
+    // fprintf(fp2, "%d\n", subString[i].Token); // print to output file
     // }
   }
 }
@@ -547,16 +534,18 @@ int str_to_int(const char *str)
 }
 
 // return the length of the number
-int getLength(int num) {
-    if(num == 0)
-      return 1;
-    int digits = 0;
-    int length = 0;
-    while(num > 0) {
-        length++;
-        num /= 10;
-    }
-    return length;
+int getLength(int num)
+{
+  if (num == 0)
+    return 1;
+  int digits = 0;
+  int length = 0;
+  while (num > 0)
+  {
+    length++;
+    num /= 10;
+  }
+  return length;
 }
 
 // ############################################
@@ -616,7 +605,7 @@ void error(int typeOfError)
     break;
   case 16:
     printf("Assignment to constant is not allowed.\n");
-    break;     
+    break;
   default:
     printf("Error: Unknown error type.\n");
     break;
@@ -629,11 +618,11 @@ void error(int typeOfError)
 /******************************************************/
 void emit(int op, int L, int M)
 {
-  if (cx > CODE_SIZE)
+  if (cx > MAX_ARRAY_LENGTH)
     printf("\nprogram to long\n");
   else
   {
-    
+
     text[cx].op = op;
     text[cx].L = L;
     text[cx].M = M;
@@ -655,7 +644,7 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
 {
 
   // printf("Token List:\n");
-  //fprintf(fp2, "Token List:\n"); // print to output file
+  // fprintf(fp2, "Token List:\n"); // print to output file
 
   for (int i = 0; i < sizeOfsubString; i++)
   {
@@ -665,7 +654,7 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
       token_array[(sizeOftoken_arra)++] = subString[i].Token; //...........
 
       // printf("%d ", subString[i].Token);
-      //fprintf(fp2, "%d ", subString[i].Token); // print to output file
+      // fprintf(fp2, "%d ", subString[i].Token); // print to output file
     }
     if (subString[i].Token == 2 || subString[i].Token == 3)
     {
@@ -680,11 +669,11 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
       }
 
       // printf("%s ", subString[i].string);
-      //fprintf(fp2, "%s ", subString[i].string); // print to output file
+      // fprintf(fp2, "%s ", subString[i].string); // print to output file
     }
   }
   // printf("\n");
-  //fprintf(fp2, "\n"); // print to output file
+  // fprintf(fp2, "\n"); // print to output file
 }
 
 /******************************************************/
@@ -743,7 +732,7 @@ void GET_TOKEN()
 // ENTER(2, ident, 0, 0, numVars + 2);
 void ENTER(int kind, char *name, int value, int mark, int addr)
 {
-  
+
   symbol s;
   s.kind = kind;
   strcpy(s.name, name);
@@ -768,59 +757,54 @@ void CONST_DECLARATION()
     // Get next token
     GET_TOKEN(); // srore the next token in TOKEN
 
-    if (TOKEN != identsym){
+    if (TOKEN != identsym)
+    {
       error(2);
-      
     }
 
     //.....
     //
     GET_TOKEN(); // Although it is not part of the Pseudocode code, because of the instruction of our Token_array, we need it. After the token of identsym we store the index of the identifier stored in identArray
 
-    
     strcpy(ident, identArray[TOKEN].id);
-    
+
     //.....
 
     // we need to check if it is already in the symbol table
-    if (SYMBOLTABLECHECK(ident) != -1){
+    if (SYMBOLTABLECHECK(ident) != -1)
+    {
       error(3); // Error: Duplicate variable declaration
-      
     }
 
     GET_TOKEN(); // srore the next token in TOKEN
 
-    if (TOKEN != eqlsym){
+    if (TOKEN != eqlsym)
+    {
       error(4);
-      
     }
 
     GET_TOKEN(); // srore the next token in TOKEN
 
-    if (TOKEN != numbersym){
+    if (TOKEN != numbersym)
+    {
       error(5);
-      
     }
 
     GET_TOKEN(); // Although it is not part of the Pseudocode code, because of the instruction of our Token_array we need it. In the token array, we saved the value of the const after the numbersym token.
     // now the token is the value of the const
     number = TOKEN;
 
-  
-
     ENTER(1, ident, number, 0, 0); // use one for const
-
 
     GET_TOKEN(); // srore the next token in TOKEN
 
   } while (TOKEN == commasym);
 
-  if (TOKEN != semicolonsym){
+  if (TOKEN != semicolonsym)
+  {
     error(6);
-    
   }
   GET_TOKEN();
-  
 }
 
 /******************************************************/
@@ -880,36 +864,35 @@ void FACTOR()
     }
     if (symbolTable[symIdx].kind == 1)
       emit(LIT, 0, symbolTable[symIdx].val);
-    else if(symbolTable[symIdx].kind == 2)
-      emit(LOD, 0, symbolTable[symIdx].addr); 
+    else if (symbolTable[symIdx].kind == 2)
+      emit(LOD, 0, symbolTable[symIdx].addr);
     GET_TOKEN();
   }
   else if (TOKEN == numbersym)
   {
     //.....
-    GET_TOKEN();// get the value of the number
+    GET_TOKEN(); // get the value of the number
     //.....
-    emit(LIT, 0, TOKEN); // LIT 0 VALUE   
+    emit(LIT, 0, TOKEN); // LIT 0 VALUE
     GET_TOKEN();
   }
   else if (TOKEN == lparentsym)
   {
     GET_TOKEN();
     EXPRESSION();
-    if (TOKEN != rparentsym){
+    if (TOKEN != rparentsym)
+    {
       error(14);
-
     }
     GET_TOKEN();
   }
   else
   {
-    error(15);// 
+    error(15); //
   }
 }
 
 /******************************************************/
-
 
 void TERM()
 {
@@ -929,12 +912,11 @@ void TERM()
       FACTOR();
       emit(OPR, 0, OPR_DIV); // 2 0 4
     }
-    
   }
 }
 /******************************************************/
 
-//expression ::=  term { ("+"|"-") term}
+// expression ::=  term { ("+"|"-") term}
 void EXPRESSION()
 {
   TERM();
@@ -954,10 +936,7 @@ void EXPRESSION()
       emit(OPR, 0, OPR_SUB);
     }
   }
-
 }
-
-
 
 /******************************************************/
 void CONDITION()
@@ -975,37 +954,37 @@ void CONDITION()
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_EQL);// OPR 0 5 or 2 0 5
+      emit(OPR, 0, OPR_EQL); // OPR 0 5 or 2 0 5
     }
     else if (TOKEN == neqsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_NEQ); //OPR 0 6 or 2 0 6
+      emit(OPR, 0, OPR_NEQ); // OPR 0 6 or 2 0 6
     }
     else if (TOKEN == lessym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_LSS);// OPR 0 7 or 2 0 7
+      emit(OPR, 0, OPR_LSS); // OPR 0 7 or 2 0 7
     }
     else if (TOKEN == leqsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_LEQ);//OPR 0 8 or 2 0 8
+      emit(OPR, 0, OPR_LEQ); // OPR 0 8 or 2 0 8
     }
     else if (TOKEN == gtrsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_GTR);// OPR 0 9 or 2 0 9
+      emit(OPR, 0, OPR_GTR); // OPR 0 9 or 2 0 9
     }
     else if (TOKEN == geqsym)
     {
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_GEQ);// OPR 0 10 or 2 0 10
+      emit(OPR, 0, OPR_GEQ); // OPR 0 10 or 2 0 10
     }
     else
     {
@@ -1021,7 +1000,7 @@ void STATEMENT()
 {
   if (TOKEN == identsym)
   {
-  
+
     char ident[12];
 
     GET_TOKEN(); // Get next token
@@ -1036,7 +1015,7 @@ void STATEMENT()
     if (symbolTable[symIdx].kind != 2)
     { // not a var
 
-      error(8); 
+      error(8);
     }
     GET_TOKEN();
     if (TOKEN != becomessym)
@@ -1070,14 +1049,14 @@ void STATEMENT()
     GET_TOKEN();
     CONDITION();
     int jpcIdx = cx; // cureent text(code) index
-    emit(JPC, 0, 0);   // JPC 0 0 or 8 0 0
+    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0
     if (TOKEN != thensym)
     {
       error(11);
     }
     GET_TOKEN();
     STATEMENT();
-    text[jpcIdx].M = cx*3;
+    text[jpcIdx].M = cx * 3;
     return;
   }
 
@@ -1092,10 +1071,10 @@ void STATEMENT()
     }
     GET_TOKEN();
     int jpcIdx = cx;
-    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0   
+    emit(JPC, 0, 0); // JPC 0 0 or 8 0 0
     STATEMENT();
-    emit(JMP, 0, loopIdx*3); // jmp 0 loopIdx or 7 0 loopIdx   
-    text[jpcIdx].M = cx*3;
+    emit(JMP, 0, loopIdx * 3); // jmp 0 loopIdx or 7 0 loopIdx
+    text[jpcIdx].M = cx * 3;
     return;
   }
 
@@ -1119,11 +1098,11 @@ void STATEMENT()
       error(7);
     }
     if (symbolTable[symIdx].kind != 2)
-    {           // not a var
-      error(8); 
+    { // not a var
+      error(8);
     }
     GET_TOKEN();
-    emit(9, 0, 2); // SYS 0 2 or 9 0 2
+    emit(9, 0, 2);                        // SYS 0 2 or 9 0 2
     emit(4, 0, symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
     return;
   }
@@ -1136,8 +1115,6 @@ void STATEMENT()
     return;
   }
 }
-
-
 
 /******************************************************/
 
@@ -1155,24 +1132,24 @@ void BLOCK()
   {
     int numVars = VAR_DECLARATION(); // call function
 
-    emit(6, 0,  numVars+ 3); // emit INC ; +3 for SL DL RN
+    emit(6, 0, numVars + 3); // emit INC ; +3 for SL DL RN
   }
 
-  STATEMENT(); //call function
+  STATEMENT(); // call function
 }
 /******************************************************/
 void PROGRAM()
 {
 
   GET_TOKEN();
-    
+
   BLOCK();
 
-  if (TOKEN != periodsym){
+  if (TOKEN != periodsym)
+  {
     error(1);
   }
   emit(SYS, 0, 3);
-
 }
 
 // ################################################################
@@ -1240,7 +1217,7 @@ int main(int argc, char *argv[])
   tokenCreator(subString, sizeOfsubString); // call function
 
   // printf("\n\n");
-  //fprintf(fp2, "\n\n"); // print to file
+  // fprintf(fp2, "\n\n"); // print to file
 
   // call function to print the lexeme table
   LexemeTable(subString, sizeOfsubString);
@@ -1262,54 +1239,51 @@ int main(int argc, char *argv[])
   // add jump 0 3 to the array
   emit(JMP, 0, 3);
   PROGRAM();
-  
-  
+
   printf("line     op    l    m\n");
   for (int i = 0; i < cx; i++)
   {
-    for(int j=0; j< 4 - getLength(i); j++)
+    for (int j = 0; j < 4 - getLength(i); j++)
       printf(" ");
     printf("%d     ", i);
-    switch(text[i].op){
-      case 1:
-         printf("LIT");
-        break;
-      case 2:
-        printf("OPR");
-        break;
-      case 3:
-        printf("LOD");
-        break;
-      case 4:
-        printf("STO");
-        break;
-      case 5:
-        printf("CAL");
-        break;
-      case 6:
-        printf("INC");
-        break;
-      case 7:
-        printf("JMP");
-        break;
-      case 8:
-        printf("JPC");
-        break;
-      case 9:
-        printf("SYS");
-        break;
-      default:
-        printf("err");
-        
-      
-      
+    switch (text[i].op)
+    {
+    case 1:
+      printf("LIT");
+      break;
+    case 2:
+      printf("OPR");
+      break;
+    case 3:
+      printf("LOD");
+      break;
+    case 4:
+      printf("STO");
+      break;
+    case 5:
+      printf("CAL");
+      break;
+    case 6:
+      printf("INC");
+      break;
+    case 7:
+      printf("JMP");
+      break;
+    case 8:
+      printf("JPC");
+      break;
+    case 9:
+      printf("SYS");
+      break;
+    default:
+      printf("err");
     }
     printf("   %d    %d\n", text[i].L, text[i].M);
     fprintf(fp2, "%d %d %d\n", text[i].op, text[i].L, text[i].M);
   }
 
-  //setting marks to 1
-  for(int i = 0; i < sizeOfSymbolTable; i++)
+  // setting marks to 1
+  for (int i = 0; i < sizeOfSymbolTable; i++)
     symbolTable[i].mark = 1;
   printSymbolTable();
 
