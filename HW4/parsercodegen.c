@@ -88,10 +88,10 @@ typedef enum // Enum for token types
   thensym = 24,
   whilesym = 25,
   dosym = 26,
-  callsym$8 = 27,
+  callsym = 27,
   constsym = 28,
   varsym = 29,
-  procsym$8 = 30,
+  procsym = 30,
   writesym = 31,
   readsym = 32,
   elsesym$8 = 33,
@@ -562,7 +562,7 @@ void error(int typeOfError)
     printf("Error: Program must end with period.\n");
     break;
   case 2:
-    printf("Error: Const, var, and read keywords must be followed by identifier.\n");
+    printf("Error: Const, var, procedure and read keywords must be followed by identifier.\n");
     break;
   case 3:
     printf("Error: Symbol name has already been declared.\n");
@@ -1027,6 +1027,19 @@ void STATEMENT()
     return;
   }
 
+  if (TOKEN == callsym)
+  {
+    GET_TOKEN();
+
+    if (TOKEN != identsym)
+    {
+      // Error
+    }
+
+    GET_TOKEN();
+    return;
+  }
+
   if (TOKEN == beginsym)
   {
     do
@@ -1132,6 +1145,33 @@ void BLOCK()
     int numVars = VAR_DECLARATION(); // call function
 
     emit(6, 0, numVars + 3); // emit INC ; +3 for SL DL RN
+  }
+
+  while (TOKEN == procsym)
+  {
+    GET_TOKEN();
+
+    if (TOKEN != identsym)
+    {
+      // Error
+    }
+
+    GET_TOKEN();
+
+    if (TOKEN != semicolonsym)
+    {
+      // Error
+    }
+
+    GET_TOKEN();
+    BLOCK();
+
+    if (TOKEN != semicolonsym)
+    {
+      // Error
+    }
+
+    STATEMENT();
   }
 
   STATEMENT(); // call function

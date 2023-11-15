@@ -4,10 +4,10 @@
 
 ### Todo List
 
-- [x] Constant Declaration
-- [x] Var Declaration
-- [x] Statement
-- [x] Condition
-- [x] Expression
-- [x] Term
-- [x] Factor
+- [] Add new errors to errors function
+- [] Add do symbol,
+- [] Statement
+- [] Condition
+- [] Expression
+- [] Term
+- [] Factor
