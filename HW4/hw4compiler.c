@@ -1123,8 +1123,24 @@ void STATEMENT()
     if(TOKEN != identsym){
       printf("\n\nerror\n\n");//jjjjjjjjjjjjj
     }
-    GET_TOKEN();
-    GET_TOKEN();
+    GET_TOKEN();// TOKEN is index at this point
+
+    //check if identifier is declared
+    int i = SYMBOLTABLECHECK(identArray[TOKEN].id);
+
+    if(i == -1){
+      printf("\nerror\n");//jjjjjjjjjjjjj
+    }
+
+    if(symbolTable[i].kind == 3){// if identifier is a procedure
+      emit(CAL, symboTable[i].level, symbolTable[i].addr*3);//
+      
+    }
+    else{
+      printf("\nerror\n");//jjjjjjjjjjjjj
+    }
+
+    GET_TOKEN();// get the next token
 
     return;
   }
