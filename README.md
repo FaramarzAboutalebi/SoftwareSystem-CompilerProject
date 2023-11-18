@@ -4,7 +4,7 @@
 
 ### Todo List
 
-- [] The code is able to pass the test case monExample.txt but we still need to work on it to pass the challengingIn.txt test case.
+ [-] The code is able to pass the test case monExample.txt but we still need to work on it to pass the challengingIn.txt test case.
 
 - [] Take care of the new errors and create new test cases for errors to demonstrate.
 
