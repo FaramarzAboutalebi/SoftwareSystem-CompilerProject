@@ -1265,13 +1265,13 @@ int main(int argc, char *argv[])
   TokenListAndTokenArrayPopulat(subString, sizeOfsubString);
 
   // print the token array
-  // printf("Token Array:\n");
-  // for (int i = 0; i < sizeOftoken_arra; i++)
-  // {
-  //   printf("%d ", token_array[i]);
-  // }
+  printf("Token Array:\n");
+  for (int i = 0; i < sizeOftoken_arra; i++)
+  {
+    printf("%d ", token_array[i]);
+  }
 
-  // printf("\n\n");
+  printf("\n\n");
 
   // implemnting symbol table
 

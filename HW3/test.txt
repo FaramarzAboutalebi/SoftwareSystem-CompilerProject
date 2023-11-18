@@ -1,0 +1,3 @@
+const x = 3;
+var y, z;
+y := z.

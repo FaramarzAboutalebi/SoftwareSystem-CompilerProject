@@ -1,7 +1,8 @@
 const x = 3;
 var y, z;
-procedure fun1;
-  const p = 3;
-  var f, h;
-  f := h * p + y;
+procedure A;
+  var p;
+  begin
+    p := y
+  end;
 y := z.

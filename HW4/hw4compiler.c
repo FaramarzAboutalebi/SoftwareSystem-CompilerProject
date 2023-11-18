@@ -1027,7 +1027,7 @@ void STATEMENT() {
     }
 
     if (symbolTable[i].kind == 3) { // if identifier is a procedure
-      emit(CAL, symbolTable[i].level, symbolTable[i].addr * 3); //
+      emit(CAL, level - symbolTable[i].level, symbolTable[i].addr * 3); //
 
     } else {
       printf("\nerror\n"); // jjjjjjjjjjjjj
@@ -1184,7 +1184,7 @@ void PROC_DECL() {
   //fix the 666 there
   int pro_addr = BLOCK();
 
-  identArray[indexOfProcInSymboltable].addr = pro_addr;
+  symbolTable[indexOfProcInSymboltable].addr = pro_addr;
 
   if (TOKEN != semicolonsym) {
     printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
@@ -1196,6 +1196,8 @@ void PROC_DECL() {
 int BLOCK() {
 
   level++;
+
+  int prev_sx = sizeOfSymbolTable;
   
   int numVars = 0;
 
@@ -1234,6 +1236,8 @@ int BLOCK() {
   STATEMENT(); // call function
 
   emit(SYS, 0,0);
+
+  sizeOfSymbolTable = prev_sx;
 
   level++;
 
@@ -1389,7 +1393,7 @@ int main(int argc, char *argv[]) {
 
   // setting marks to 1
   // for (int i = 0; i < sizeOfSymbolTable; i++)
-  //   symbolTable[i].mark = 1;     ?????????????/
+  //   symbolTable[i].mark = 1;     ?????????????
 
   printSymbolTable(); // print the symbol table to the consol
 
