@@ -50,7 +50,7 @@ int sizeOfSymbolTable = 0;
 
 int currentToken = -1; // index of the current token to traverse in token_array
 int TOKEN;             // token holder
-int numVars = 0;       // vaiables counter
+
 
 // instrution struct
 typedef struct {
@@ -773,8 +773,10 @@ void CONST_DECLARATION() {
 /******************************************************/
 
 int VAR_DECLARATION() {
+  int numVars = 0;       // vaiables counter
 
   do {
+    
     numVars++; // count number of variabels
 
     char ident[12];
@@ -832,7 +834,7 @@ void FACTOR() {
     }
     // If the symbol is a var, emit a LOD instruction
     else if (symbolTable[symIdx].kind == 2) {
-      emit(LOD, 0, symbolTable[symIdx].addr);
+      emit(LOD, level-symbolTable[symIdx].level, symbolTable[symIdx].addr);//level set
     }
     GET_TOKEN(); // Move to the next token
   }
@@ -1006,7 +1008,7 @@ void STATEMENT() {
 
     EXPRESSION(); // proess the expression after the :=
 
-    emit(4, 0, symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M
+    emit(STO, level-symbolTable[symIdx].level, symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M  level set
 
     return;
   }
@@ -1125,7 +1127,7 @@ void STATEMENT() {
 
     GET_TOKEN();
     emit(9, 0, 2);                        // gSYS 0 2 or 9 0 2
-    emit(4, 0, symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
+    emit(STO, level - symbolTable[symIdx].level, symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
     return;
   }
 
@@ -1199,7 +1201,7 @@ int BLOCK() {
 
   int prev_sx = sizeOfSymbolTable;
   
-  int numVars = 0;
+  int space = 3;
 
   int jmpaddr = cx; // current text(code) index
 
@@ -1213,7 +1215,8 @@ int BLOCK() {
 
   // if token is var
   if (TOKEN == varsym) {
-    numVars = VAR_DECLARATION(); // call function
+    space += VAR_DECLARATION(); // call function
+    printf("......space  = %d\n\n", space);
 
     //emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
   }
@@ -1222,7 +1225,9 @@ int BLOCK() {
   // while token is procedure
   if (TOKEN == procsym) {
 
+    
     PROC_DECL();
+    
   }
   /*  $$$$$$$$$$$$$$$$$ */
 
@@ -1230,12 +1235,12 @@ int BLOCK() {
   text[jmpaddr].M = cx * 3; // set M for JMP
 
   int proc_addr = cx; // proc_addr is the address of the procedure
-  emit(INC, 0 , numVars + 3); // INC 0 numVars + 3
+  emit(INC, 0 , space); // INC 0 numVars + 3
   
   
   STATEMENT(); // call function
 
-  emit(SYS, 0,0);
+  emit(SYS, 0,3);
 
   sizeOfSymbolTable = prev_sx;
 
