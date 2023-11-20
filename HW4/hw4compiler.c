@@ -20,7 +20,8 @@
 #define MAX_SYMBOL_TABLE_SIZE 500
 
 //  data structure for the symbol.
-typedef struct {
+typedef struct
+{
   int kind;      // const = 1, var = 2, proc = 3
   char name[12]; // name up to 11 chars
   int val;       // number (ASCII value)
@@ -30,7 +31,8 @@ typedef struct {
 } symbol;
 
 // struct to save the idenetifiers
-typedef struct {
+typedef struct
+{
   char id[MAX_ARRAY_LENGTH];
 } stringHolder;
 
@@ -51,9 +53,9 @@ int sizeOfSymbolTable = 0;
 int currentToken = -1; // index of the current token to traverse in token_array
 int TOKEN;             // token holder
 
-
 // instrution struct
-typedef struct {
+typedef struct
+{
   int op;
   int L;
   int M;
@@ -72,7 +74,8 @@ int level = -1; // lexigraphical level
 FILE *fp2;
 
 // adding $8 to the to hide them callsym and procsym????????
-typedef enum {
+typedef enum
+{
   oddsym = 1,
   identsym = 2,
   numbersym = 3,
@@ -121,7 +124,8 @@ void EXPRESSION();
 int BLOCK();
 
 // struture to store the lexeme and token
-typedef struct {
+typedef struct
+{
   char string[MAX_ARRAY_LENGTH];
   int Token;
 } subString;
@@ -131,22 +135,26 @@ typedef struct {
 // This function takes the input anf convert it to subString and store them to
 // the subString array which is a sttructure array
 int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
-                     int sizeOfsubString, int stringIndex) { // function
+                     int sizeOfsubString, int stringIndex)
+{ // function
 
-  for (int i = 0; i < sizeOfinputArr; i++) {
+  for (int i = 0; i < sizeOfinputArr; i++)
+  {
 
     if (inputArr[i] >= 0 && inputArr[i] <= 32) // ASCII of invisivle charactors
     {
       continue;
     }
-    if (isdigit(inputArr[i])) { // if the charactor is a digit
+    if (isdigit(inputArr[i]))
+    { // if the charactor is a digit
 
       stringIndex = 0;
       // add the digit to the string
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
 
       // while the next charactors are digits add them to the string
-      while (isdigit(inputArr[i + 1])) {
+      while (isdigit(inputArr[i + 1]))
+      {
         i++;
         subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
       }
@@ -157,7 +165,9 @@ int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
       stringIndex = 0;
       // increment sizeOfsubString to create another string
       sizeOfsubString++;
-    } else if (isalpha(inputArr[i])) { // identifier
+    }
+    else if (isalpha(inputArr[i]))
+    { // identifier
 
       stringIndex = 0;
 
@@ -165,7 +175,8 @@ int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
 
       // while the next charactors are alphabet or digits add them to the string
-      while (isalpha(inputArr[i + 1]) || isdigit(inputArr[i + 1])) {
+      while (isalpha(inputArr[i + 1]) || isdigit(inputArr[i + 1]))
+      {
         i++;
         subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
       }
@@ -177,11 +188,13 @@ int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
       stringIndex = 0;
       // increment sizeOfsubString to create another string
       sizeOfsubString++;
-    } else if (((inputArr[i] == '<' && inputArr[i + 1] == '>') ||
-                (inputArr[i] == '<' && inputArr[i + 1] == '=') ||
-                (inputArr[i] == '>' && inputArr[i + 1] == '=') ||
-                (inputArr[i] == ':' &&
-                 inputArr[i + 1] == '='))) { // take care of <>   <=   >=   :=
+    }
+    else if (((inputArr[i] == '<' && inputArr[i + 1] == '>') ||
+              (inputArr[i] == '<' && inputArr[i + 1] == '=') ||
+              (inputArr[i] == '>' && inputArr[i + 1] == '=') ||
+              (inputArr[i] == ':' &&
+               inputArr[i + 1] == '=')))
+    { // take care of <>   <=   >=   :=
 
       stringIndex = 0;
 
@@ -200,21 +213,26 @@ int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
       stringIndex = 0;
       // increment sizeOfsubString to create another string
       sizeOfsubString++;
-    } else if ((inputArr[i] == '/' &&
-                inputArr[i + 1] == '*')) { // handle comment
+    }
+    else if ((inputArr[i] == '/' &&
+              inputArr[i + 1] == '*'))
+    { // handle comment
 
       stringIndex = 0;
 
       // Traversing in the array to see if */ exsists
       int j;
-      for (j = i + 1 + 1; j < sizeOfinputArr; j++) {
-        if (inputArr[j] == '*' && inputArr[j + 1] == '/') {
+      for (j = i + 1 + 1; j < sizeOfinputArr; j++)
+      {
+        if (inputArr[j] == '*' && inputArr[j + 1] == '/')
+        {
           // update the index to skip the comment
           i = j + 1;
           break;
         }
       }
-      if (i < j + 1) { //  if */ did not find
+      if (i < j + 1)
+      { //  if */ did not find
 
         // creates two diffrent subStrings, one for the star and one for the
         // slash
@@ -234,8 +252,10 @@ int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
         // update the index to last used element
         i = i + 1;
       }
-    } else if (inputArr[i] != ' ' && inputArr[i] != '\t' &&
-               inputArr[i] != '\n') { // taking care of sybmols and oprators
+    }
+    else if (inputArr[i] != ' ' && inputArr[i] != '\t' &&
+             inputArr[i] != '\n')
+    { // taking care of sybmols and oprators
 
       subString[sizeOfsubString].string[stringIndex++] = inputArr[i];
       // add null terminator
@@ -254,11 +274,13 @@ int subStringCreater(char *inputArr, int sizeOfinputArr, subString *subString,
 
 /******************************************************/
 
-int isThisAnumber(char string[]) { // checks if the string is a number
+int isThisAnumber(char string[])
+{ // checks if the string is a number
 
   int sizeOfstring = strlen(string);
 
-  for (int i = 0; i < sizeOfstring; i++) {
+  for (int i = 0; i < sizeOfstring; i++)
+  {
     if (!isdigit(string[i]))
       return 0;
   }
@@ -267,28 +289,35 @@ int isThisAnumber(char string[]) { // checks if the string is a number
 
 /******************************************************/
 
-void tokenCreator(subString *subString, int sizeOfsubString) { // function
+void tokenCreator(subString *subString, int sizeOfsubString)
+{ // function
 
-  for (int i = 0; i < sizeOfsubString; i++) {
+  for (int i = 0; i < sizeOfsubString; i++)
+  {
 
     // plus
-    if (strcmp(subString[i].string, "+") == 0) {
+    if (strcmp(subString[i].string, "+") == 0)
+    {
       subString[i].Token = plussym;
     }
     // minus
-    else if (strcmp(subString[i].string, "-") == 0) {
+    else if (strcmp(subString[i].string, "-") == 0)
+    {
       subString[i].Token = minussym;
     }
     // multiplication
-    else if (strcmp(subString[i].string, "*") == 0) {
+    else if (strcmp(subString[i].string, "*") == 0)
+    {
       subString[i].Token = multsym;
     }
     // slash
-    else if (strcmp(subString[i].string, "/") == 0) {
+    else if (strcmp(subString[i].string, "/") == 0)
+    {
       subString[i].Token = slashsym;
     }
     // odd
-    else if (strcmp(subString[i].string, "odd") == 0) {
+    else if (strcmp(subString[i].string, "odd") == 0)
+    {
       subString[i].Token = oddsym;
     }
     // ifel
@@ -297,100 +326,123 @@ void tokenCreator(subString *subString, int sizeOfsubString) { // function
     //   subString[i].Token = ifelsym;
     // }
     // equal
-    else if (strcmp(subString[i].string, "=") == 0) {
+    else if (strcmp(subString[i].string, "=") == 0)
+    {
       subString[i].Token = eqlsym;
     }
     // non equal
-    else if (strcmp(subString[i].string, "<>") == 0) {
+    else if (strcmp(subString[i].string, "<>") == 0)
+    {
       subString[i].Token = neqsym;
     }
     // less than
-    else if (strcmp(subString[i].string, "<") == 0) {
+    else if (strcmp(subString[i].string, "<") == 0)
+    {
       subString[i].Token = lessym;
     }
     // less than or equal to
-    else if (strcmp(subString[i].string, "<=") == 0) {
+    else if (strcmp(subString[i].string, "<=") == 0)
+    {
       subString[i].Token = leqsym;
     }
     // greater than
-    else if (strcmp(subString[i].string, ">") == 0) {
+    else if (strcmp(subString[i].string, ">") == 0)
+    {
       subString[i].Token = gtrsym;
     }
     // greater than or equal to
-    else if (strcmp(subString[i].string, ">=") == 0) {
+    else if (strcmp(subString[i].string, ">=") == 0)
+    {
       subString[i].Token = geqsym;
     }
     // left parenthesis
-    else if (strcmp(subString[i].string, "(") == 0) {
+    else if (strcmp(subString[i].string, "(") == 0)
+    {
       subString[i].Token = lparentsym;
     }
     // right parenthesis
-    else if (strcmp(subString[i].string, ")") == 0) {
+    else if (strcmp(subString[i].string, ")") == 0)
+    {
       subString[i].Token = rparentsym;
     }
     // comma
-    else if (strcmp(subString[i].string, ",") == 0) {
+    else if (strcmp(subString[i].string, ",") == 0)
+    {
       subString[i].Token = commasym;
     }
     // semicolon
-    else if (strcmp(subString[i].string, ";") == 0) {
+    else if (strcmp(subString[i].string, ";") == 0)
+    {
       subString[i].Token = semicolonsym;
     }
     // period
-    else if (strcmp(subString[i].string, ".") == 0) {
+    else if (strcmp(subString[i].string, ".") == 0)
+    {
       subString[i].Token = periodsym;
     }
     // become
-    else if (strcmp(subString[i].string, ":=") == 0) {
+    else if (strcmp(subString[i].string, ":=") == 0)
+    {
       subString[i].Token = becomessym;
     }
     // begin
-    else if (strcmp(subString[i].string, "begin") == 0) {
+    else if (strcmp(subString[i].string, "begin") == 0)
+    {
       subString[i].Token = beginsym;
     }
     // end
-    else if (strcmp(subString[i].string, "end") == 0) {
+    else if (strcmp(subString[i].string, "end") == 0)
+    {
       subString[i].Token = endsym;
     }
     // if
-    else if (strcmp(subString[i].string, "if") == 0) {
+    else if (strcmp(subString[i].string, "if") == 0)
+    {
       subString[i].Token = ifsym;
     }
     // then
-    else if (strcmp(subString[i].string, "then") == 0) {
+    else if (strcmp(subString[i].string, "then") == 0)
+    {
       subString[i].Token = thensym;
     }
     // while
-    else if (strcmp(subString[i].string, "while") == 0) {
+    else if (strcmp(subString[i].string, "while") == 0)
+    {
       subString[i].Token = whilesym;
     }
     // do
-    else if (strcmp(subString[i].string, "do") == 0) {
+    else if (strcmp(subString[i].string, "do") == 0)
+    {
       subString[i].Token = dosym;
     }
     // call
-    else if (strcmp(subString[i].string, "call") == 0) {
+    else if (strcmp(subString[i].string, "call") == 0)
+    {
       subString[i].Token = callsym;
-
     }
     // const
-    else if (strcmp(subString[i].string, "const") == 0) {
+    else if (strcmp(subString[i].string, "const") == 0)
+    {
       subString[i].Token = constsym;
     }
     // var
-    else if (strcmp(subString[i].string, "var") == 0) {
+    else if (strcmp(subString[i].string, "var") == 0)
+    {
       subString[i].Token = varsym;
     }
     // procedure
-    else if (strcmp(subString[i].string, "procedure") == 0) {
+    else if (strcmp(subString[i].string, "procedure") == 0)
+    {
       subString[i].Token = procsym;
     }
     // write
-    else if (strcmp(subString[i].string, "write") == 0) {
+    else if (strcmp(subString[i].string, "write") == 0)
+    {
       subString[i].Token = writesym;
     }
     // read
-    else if (strcmp(subString[i].string, "read") == 0) {
+    else if (strcmp(subString[i].string, "read") == 0)
+    {
       subString[i].Token = readsym;
     }
     // else
@@ -399,7 +451,8 @@ void tokenCreator(subString *subString, int sizeOfsubString) { // function
     //   subString[i].Token = elsesym;
     // }
     // number
-    else if (isThisAnumber(subString[i].string)) {
+    else if (isThisAnumber(subString[i].string))
+    {
 
       if (strlen(subString[i].string) <= MAX_DIGITS_LENGTH)
         subString[i].Token = numbersym;
@@ -408,11 +461,14 @@ void tokenCreator(subString *subString, int sizeOfsubString) { // function
     }
     // idenfier
     else if (isalpha(subString[i].string[0]) ||
-             isdigit(subString[i].string[0])) {
-      if (strlen(subString[i].string) > MAX_CHARACTER_LENGTH) {
+             isdigit(subString[i].string[0]))
+    {
+      if (strlen(subString[i].string) > MAX_CHARACTER_LENGTH)
+      {
         subString[i].Token =
             -2; // Error : Identifiers cannot exceed 11 characters in length
-      } else
+      }
+      else
         subString[i].Token = identsym;
     }
 
@@ -424,7 +480,8 @@ void tokenCreator(subString *subString, int sizeOfsubString) { // function
 /******************************************************/
 
 // prints out the lexeme table
-void LexemeTable(subString *subString, int sizeOfsubString) {
+void LexemeTable(subString *subString, int sizeOfsubString)
+{
 
   // printf("Lexeme Table:\n");
   // fprintf(fp2, "Lexeme Table:\n"); // print to output file
@@ -433,9 +490,11 @@ void LexemeTable(subString *subString, int sizeOfsubString) {
   // fprintf(fp2, "lexeme      token type\n"); // print to output file
 
   // prints out the lexemes
-  for (int i = 0; i < sizeOfsubString; i++) {
+  for (int i = 0; i < sizeOfsubString; i++)
+  {
 
-    if (subString[i].Token > 0) { // check if token is valid
+    if (subString[i].Token > 0)
+    { // check if token is valid
 
       // printf("%s", subString[i].string);
       // fprintf(fp2, "%s", subString[i].string); // print to output file
@@ -449,15 +508,20 @@ void LexemeTable(subString *subString, int sizeOfsubString) {
       // }
     }
     // prints the erorrs
-    if (subString[i].Token == -1) {
+    if (subString[i].Token == -1)
+    {
       printf("Error : Number too long.\n");
       exit(1);
       // fprintf(fp2, "Error : Number too long.\n"); // print to output file
-    } else if (subString[i].Token == -2) {
+    }
+    else if (subString[i].Token == -2)
+    {
       printf("Error : Name too long.\n");
       exit(1);
       // fprintf(fp2, "Error : Name too long.\n"); // print to
-    } else if (subString[i].Token == -3) {
+    }
+    else if (subString[i].Token == -3)
+    {
       printf("Error : Invalid Symbols.\n");
       exit(1);
       // fprintf(fp2, "Error : Invalid Symbols.\n"); // print to output file
@@ -473,19 +537,23 @@ void LexemeTable(subString *subString, int sizeOfsubString) {
 /******************************************************/
 
 // convering string to number
-int str_to_int(const char *str) {
+int str_to_int(const char *str)
+{
   int result = 0;
   int sign = 1; // To handle negative numbers
 
   // Check for a negative sign
-  if (*str == '-') {
+  if (*str == '-')
+  {
     sign = -1;
     str++; // Move to the next character
   }
 
-  while (*str) {
+  while (*str)
+  {
     // Ensure the character is a digit
-    if (*str < '0' || *str > '9') {
+    if (*str < '0' || *str > '9')
+    {
       printf("Invalid character detected: %c\n", *str);
       return 0; // Or handle the error as required
     }
@@ -500,12 +568,14 @@ int str_to_int(const char *str) {
 /******************************************************/
 
 // return the length of the number
-int getLength(int num) {
+int getLength(int num)
+{
   if (num == 0)
     return 1;
   int digits = 0;
   int length = 0;
-  while (num > 0) {
+  while (num > 0)
+  {
     length++;
     num /= 10;
   }
@@ -514,8 +584,10 @@ int getLength(int num) {
 
 /******************************************************/
 
-void error(int typeOfError) {
-  switch (typeOfError) {
+void error(int typeOfError)
+{
+  switch (typeOfError)
+  {
   case 1:
     printf("Error: Program must end with period.\n");
     break;
@@ -577,10 +649,12 @@ void error(int typeOfError) {
 /******************************************************/
 
 // function to generate code
-void emit(int op, int L, int M) {
+void emit(int op, int L, int M)
+{
   if (cx > CODE_SIZE)
     error(16);
-  else {
+  else
+  {
 
     text[cx].op = op;
     text[cx].L = L;
@@ -600,23 +674,28 @@ void emit(int op, int L, int M) {
 
 */
 
-void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString) {
+void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString)
+{
 
   // printf("Token List:\n");
   // fprintf(fp2, "Token List:\n"); // print to output file
 
-  for (int i = 0; i < sizeOfsubString; i++) {
+  for (int i = 0; i < sizeOfsubString; i++)
+  {
     // prints valid tokens
-    if (subString[i].Token > 0) {
+    if (subString[i].Token > 0)
+    {
       token_array[(sizeOftoken_arra)++] = subString[i].Token; //...........
 
       // printf("%d ", subString[i].Token);
       // fprintf(fp2, "%d ", subString[i].Token); // print to output file
     }
-    if (subString[i].Token == 2 || subString[i].Token == 3) {
+    if (subString[i].Token == 2 || subString[i].Token == 3)
+    {
       if (subString[i].Token == 3)
         token_array[(sizeOftoken_arra)++] = str_to_int(subString[i].string);
-      else {
+      else
+      {
 
         strcpy(identArray[(sizeOfidentArray)].id, subString[i].string);
         token_array[(sizeOftoken_arra)++] = sizeOfidentArray;
@@ -633,17 +712,20 @@ void TokenListAndTokenArrayPopulat(subString *subString, int sizeOfsubString) {
 
 /******************************************************/
 
-void printSymbolTable() {
+void printSymbolTable()
+{
   printf("\nSymbol Table:\n\n");
 
   printf("Kind | Name        | Value | Level | Address | Mark\n");
   printf("---------------------------------------------------\n");
 
-  for (int i = 0; i < sizeOfSymbolTable; i++) {
+  for (int i = 0; i < sizeOfSymbolTable; i++)
+  {
 
     printf("   %d |", symbolTable[i].kind);
 
-    for (int j = 0; j < 12 - strlen(symbolTable[i].name); j++) {
+    for (int j = 0; j < 12 - strlen(symbolTable[i].name); j++)
+    {
       printf(" ");
     }
 
@@ -661,13 +743,15 @@ void printSymbolTable() {
 // linear search through symbol table looking at name
 // return index if found, -1 if not
 
-int SYMBOLTABLECHECK(char *string) {
+int SYMBOLTABLECHECK(char *string)
+{
 
   // Iterate backwards through the symbol table.
-  for (int seek = sizeOfSymbolTable - 1; seek >= 0; seek--) {
-
-    // Compare the current symbol table entry's name with the input string.
-    if (strcmp(symbolTable[seek].name, string) == 0) {
+  for (int seek = sizeOfSymbolTable - 1; seek >= 0; seek--)
+  {
+    // Compare the current symbol table entry's name and level with the input string.
+    if (strcmp(symbolTable[seek].name, string) == 0)
+    {
 
       // If a match is found, return the current index.
       return seek;
@@ -681,7 +765,8 @@ int SYMBOLTABLECHECK(char *string) {
 /******************************************************/
 
 // return the int value of the current token
-void GET_TOKEN() {
+void GET_TOKEN()
+{
   // Increment the index to point to the next token.
   currentToken++;
 
@@ -692,10 +777,11 @@ void GET_TOKEN() {
 /******************************************************/
 
 // implement the symbol table
-void ENTER(int kind, char *name, int value, int level, int addr) {
+void ENTER(int kind, char *name, int value, int level, int addr)
+{
 
-  symbol s;      //// Initialize a new symbol struct with the provided values.
-  s.kind = kind; // Set the symbol's kind.
+  symbol s;             //// Initialize a new symbol struct with the provided values.
+  s.kind = kind;        // Set the symbol's kind.
   strcpy(s.name, name); // Copy the name into the symbol's name field.
   s.val = value;        // Set the symbol's value.
   s.level = level;      // Initialize level to 0
@@ -711,15 +797,18 @@ void ENTER(int kind, char *name, int value, int level, int addr) {
 
 /******************************************************/
 
-void CONST_DECLARATION() {
-  do {
+void CONST_DECLARATION()
+{
+  do
+  {
     int number;
     char ident[12];
 
     // Get next token
     GET_TOKEN(); // srore the next token in TOKEN
 
-    if (TOKEN != identsym) {
+    if (TOKEN != identsym)
+    {
       error(2);
     }
 
@@ -735,19 +824,22 @@ void CONST_DECLARATION() {
     //.....
 
     // we need to check if it is already in the symbol table
-    if (SYMBOLTABLECHECK(ident) != -1) {
+    if (SYMBOLTABLECHECK(ident) != -1)
+    {
       error(3); // Error: Duplicate variable declaration
     }
 
     GET_TOKEN(); // srore the next token in TOKEN
 
-    if (TOKEN != eqlsym) { // Error: constants must be assigned with =
+    if (TOKEN != eqlsym)
+    { // Error: constants must be assigned with =
       error(4);
     }
 
     GET_TOKEN(); // srore the next token in TOKEN
 
-    if (TOKEN != numbersym) { // if the token is not a number
+    if (TOKEN != numbersym)
+    { // if the token is not a number
       error(5);
     }
 
@@ -764,7 +856,8 @@ void CONST_DECLARATION() {
 
   } while (TOKEN == commasym);
 
-  if (TOKEN != semicolonsym) { // Error: Missing semicolon
+  if (TOKEN != semicolonsym)
+  { // Error: Missing semicolon
     error(6);
   }
   GET_TOKEN(); // get next token
@@ -772,11 +865,13 @@ void CONST_DECLARATION() {
 
 /******************************************************/
 
-int VAR_DECLARATION() {
-  int numVars = 0;       // vaiables counter
+int VAR_DECLARATION()
+{
+  int numVars = 0; // vaiables counter
 
-  do {
-    
+  do
+  {
+
     numVars++; // count number of variabels
 
     char ident[12];
@@ -790,8 +885,12 @@ int VAR_DECLARATION() {
     strcpy(ident, identArray[TOKEN].id);
     //.....
 
+    printf("DECLARING VAR %s @ LEVEL %d\n", ident, level);
+
+    int dupIndex = SYMBOLTABLECHECK(ident);
+
     // we need to check if it is already in the symbol table
-    if (SYMBOLTABLECHECK(ident) != -1)
+    if (dupIndex != -1 && symbolTable[dupIndex].level == level)
       error(3); // Error: Duplicate variable declaration
 
     GET_TOKEN(); // get next token
@@ -810,10 +909,12 @@ int VAR_DECLARATION() {
 
 /******************************************************/
 
-void FACTOR() {
+void FACTOR()
+{
 
   // Handle identifiers
-  if (TOKEN == identsym) {
+  if (TOKEN == identsym)
+  {
 
     char ident[12]; // Buffer to store the identifier name
 
@@ -824,22 +925,26 @@ void FACTOR() {
 
     // Check if the identifier exists in the symbol table
     int symIdx = SYMBOLTABLECHECK(ident);
-    if (symIdx == -1) {
+    if (symIdx == -1)
+    {
       error(7); // Error: Undeclared identifier
     }
 
     // If the symbol is a constant, emit a LIT instruction
-    if (symbolTable[symIdx].kind == 1) {
+    if (symbolTable[symIdx].kind == 1)
+    {
       emit(LIT, 0, symbolTable[symIdx].val);
     }
     // If the symbol is a var, emit a LOD instruction
-    else if (symbolTable[symIdx].kind == 2) {
-      emit(LOD, level-symbolTable[symIdx].level, symbolTable[symIdx].addr);//level set
+    else if (symbolTable[symIdx].kind == 2)
+    {
+      emit(LOD, level - symbolTable[symIdx].level, symbolTable[symIdx].addr); // level set
     }
     GET_TOKEN(); // Move to the next token
   }
   // Handle numbers
-  else if (TOKEN == numbersym) {
+  else if (TOKEN == numbersym)
+  {
     // .....
     GET_TOKEN(); // get the value of the number
     // .....
@@ -848,18 +953,21 @@ void FACTOR() {
     GET_TOKEN();         // Move to the next token
   }
   // Handle sub-expressions within parentheses
-  else if (TOKEN == lparentsym) {
+  else if (TOKEN == lparentsym)
+  {
     GET_TOKEN();  // Move past the left parenthesis
     EXPRESSION(); // Process the expression inside the parentheses
 
     // Expect a right parenthesis after the expression
-    if (TOKEN != rparentsym) {
+    if (TOKEN != rparentsym)
+    {
       error(14); // Error: Right parenthesis missing
     }
     GET_TOKEN(); // Move to the next token
   }
   // If none of the above, it's an error
-  else {
+  else
+  {
     error(15); // Error: Invalid factor
   }
 }
@@ -871,23 +979,27 @@ void FACTOR() {
  * A term is defined as a factor or a series of factors separated by
  * multiplication (*) or division (/) operators.
  */
-void TERM() {
+void TERM()
+{
   // Process the first factor of the term.
   FACTOR();
 
   // Continue processing as long as there is a multiplication or division
   // symbol.
-  while (TOKEN == multsym || TOKEN == slashsym) {
+  while (TOKEN == multsym || TOKEN == slashsym)
+  {
     // Handle multiplication.
-    if (TOKEN == multsym) {
-      GET_TOKEN(); // Move to the next token after the multiplication symbol.
-      FACTOR();    // Process the next factor in the term.
+    if (TOKEN == multsym)
+    {
+      GET_TOKEN();           // Move to the next token after the multiplication symbol.
+      FACTOR();              // Process the next factor in the term.
       emit(OPR, 0, OPR_MUL); // Emit opcode for multiplication operation.
     }
     // Handle division.
-    else if (TOKEN == slashsym) {
-      GET_TOKEN(); // Move to the next token after the division symbol.
-      FACTOR();    // Process the next factor in the term.
+    else if (TOKEN == slashsym)
+    {
+      GET_TOKEN();           // Move to the next token after the division symbol.
+      FACTOR();              // Process the next factor in the term.
       emit(OPR, 0, OPR_DIV); // Emit opcode for division operation.
     }
   }
@@ -901,20 +1013,24 @@ void TERM() {
  * An expression is a sequence of terms combined using addition or subtraction
  * operators.
  */
-void EXPRESSION() {
+void EXPRESSION()
+{
   // Process the first term of the expression.
   TERM();
 
   // Continue processing as long as there is an addition or subtraction symbol.
-  while (TOKEN == plussym || TOKEN == minussym) {
+  while (TOKEN == plussym || TOKEN == minussym)
+  {
     // Handle addition.
-    if (TOKEN == plussym) {
+    if (TOKEN == plussym)
+    {
       GET_TOKEN();           // Move to the next token after the plus symbol.
       TERM();                // Process the next term in the expression.
       emit(OPR, 0, OPR_ADD); // Emit opcode for addition operation.
     }
     // Handle subtraction.
-    else {                   // Implies TOKEN == minussym
+    else
+    {                        // Implies TOKEN == minussym
       GET_TOKEN();           // Move to the next token after the minus symbol.
       TERM();                // Process the next term in the expression.
       emit(OPR, 0, OPR_SUB); // Emit opcode for subtraction operation.
@@ -929,45 +1045,62 @@ void EXPRESSION() {
     condition ::= "odd" expression | expression  rel-op  expression
 
  */
-void CONDITION() {
+void CONDITION()
+{
 
   // Check if the condition is an 'odd' operation.
-  if (TOKEN == oddsym) {
-    GET_TOKEN();  // Move to the next token after 'odd'.
-    EXPRESSION(); // Process the expression whose oddness is to be checked.
+  if (TOKEN == oddsym)
+  {
+    GET_TOKEN();           // Move to the next token after 'odd'.
+    EXPRESSION();          // Process the expression whose oddness is to be checked.
     emit(OPR, 0, OPR_ODD); // Emit opcode for the 'odd' operation.
-  } else {
+  }
+  else
+  {
     // Process the first expression of a comparative condition.
     EXPRESSION();
 
     // Depending on the token, process the second part of the condition.
-    if (TOKEN == eqlsym) { // Equality check
+    if (TOKEN == eqlsym)
+    { // Equality check
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_EQL);      // Emit opcode for equality comparison.
-    } else if (TOKEN == neqsym) { // Inequality check
+      emit(OPR, 0, OPR_EQL); // Emit opcode for equality comparison.
+    }
+    else if (TOKEN == neqsym)
+    { // Inequality check
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_NEQ);      // Emit opcode for inequality comparison.
-    } else if (TOKEN == lessym) { // Less-than check
+      emit(OPR, 0, OPR_NEQ); // Emit opcode for inequality comparison.
+    }
+    else if (TOKEN == lessym)
+    { // Less-than check
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_LSS);      // Emit opcode for less-than comparison.
-    } else if (TOKEN == leqsym) { // Less-than or equal-to check
+      emit(OPR, 0, OPR_LSS); // Emit opcode for less-than comparison.
+    }
+    else if (TOKEN == leqsym)
+    { // Less-than or equal-to check
       GET_TOKEN();
       EXPRESSION();
       emit(OPR, 0,
            OPR_LEQ); // Emit opcode for less-than or equal-to comparison.
-    } else if (TOKEN == gtrsym) { // Greater-than check
+    }
+    else if (TOKEN == gtrsym)
+    { // Greater-than check
       GET_TOKEN();
       EXPRESSION();
-      emit(OPR, 0, OPR_GTR);      // Emit opcode for greater-than comparison.
-    } else if (TOKEN == geqsym) { // Greater-than or equal-to check
+      emit(OPR, 0, OPR_GTR); // Emit opcode for greater-than comparison.
+    }
+    else if (TOKEN == geqsym)
+    { // Greater-than or equal-to check
       GET_TOKEN();
       EXPRESSION();
       emit(OPR, 0,
            OPR_GEQ); // Emit opcode for greater-than or equal-to comparison.
-    } else {
+    }
+    else
+    {
       // If no valid comparison operator is found, raise an error.
       error(13); // Error: Invalid or missing comparison operator.
     }
@@ -976,7 +1109,8 @@ void CONDITION() {
 
 /******************************************************/
 
-void STATEMENT() {
+void STATEMENT()
+{
 
   // ident ":=" expression
   if (TOKEN == identsym) // if token is an identifier
@@ -993,7 +1127,8 @@ void STATEMENT() {
     {
       error(7); // Error: Undeclared identifier
     }
-    if (symbolTable[symIdx].kind != 2) { // not a var
+    if (symbolTable[symIdx].kind != 2)
+    { // not a var
       error(8);
     }
 
@@ -1008,15 +1143,17 @@ void STATEMENT() {
 
     EXPRESSION(); // proess the expression after the :=
 
-    emit(STO, level-symbolTable[symIdx].level, symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M  level set
+    emit(STO, level - symbolTable[symIdx].level, symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M  level set
 
     return;
   }
   //"call" ident
-  if (TOKEN == callsym) {
+  if (TOKEN == callsym)
+  {
 
     GET_TOKEN();
-    if (TOKEN != identsym) {
+    if (TOKEN != identsym)
+    {
       printf("\n\nerror\n\n"); // jjjjjjjjjjjjj
     }
     GET_TOKEN(); // TOKEN is index at this point
@@ -1024,14 +1161,17 @@ void STATEMENT() {
     // check if identifier is declared
     int i = SYMBOLTABLECHECK(identArray[TOKEN].id);
 
-    if (i == -1) {
+    if (i == -1)
+    {
       printf("\nerror\n"); // jjjjjjjjjjjjj
     }
 
-    if (symbolTable[i].kind == 3) { // if identifier is a procedure
+    if (symbolTable[i].kind == 3)
+    {                                                                   // if identifier is a procedure
       emit(CAL, level - symbolTable[i].level, symbolTable[i].addr * 3); //
-
-    } else {
+    }
+    else
+    {
       printf("\nerror\n"); // jjjjjjjjjjjjj
     }
 
@@ -1042,7 +1182,8 @@ void STATEMENT() {
   //"begin" statement { ";" statement } "end"
   if (TOKEN == beginsym) // if statement starts with begin
   {
-    do {
+    do
+    {
       GET_TOKEN();
       STATEMENT();                   // process the statement afte the begin
     } while (TOKEN == semicolonsym); // if there is a semicolon after the
@@ -1064,7 +1205,8 @@ void STATEMENT() {
     int jpcIdx = cx; // cureent text(code) index
     emit(JPC, 0, 0); // JPC 0 0 or 8 0 0
 
-    if (TOKEN != thensym) {
+    if (TOKEN != thensym)
+    {
       error(11);
     }
     GET_TOKEN();
@@ -1117,7 +1259,8 @@ void STATEMENT() {
     // make sure that the identifier already decalared
     strcpy(ident, identArray[TOKEN].id);
     int symIdx = SYMBOLTABLECHECK(ident);
-    if (symIdx == -1) {
+    if (symIdx == -1)
+    {
       error(7); // Error: Undeclared identifier
     }
     if (symbolTable[symIdx].kind != 2) // make sure that the identifier is a var
@@ -1126,7 +1269,7 @@ void STATEMENT() {
     }
 
     GET_TOKEN();
-    emit(9, 0, 2);                        // gSYS 0 2 or 9 0 2
+    emit(9, 0, 2);                                                          // gSYS 0 2 or 9 0 2
     emit(STO, level - symbolTable[symIdx].level, symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
     return;
   }
@@ -1162,103 +1305,107 @@ There are two possible addresses to use for a procedure:
 */
 
 // procedure-declaration ::= { "procedure" ident ";" block ";" }
-void PROC_DECL() {
+void PROC_DECL()
+{
 
   GET_TOKEN();
 
-  if (TOKEN != identsym) {
+  if (TOKEN != identsym)
+  {
     printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
   }
 
   GET_TOKEN(); // index of identifire
 
-  ENTER(3, identArray[TOKEN].id, 0, level, 666);// OPTIONAL: we used the INC
+  ENTER(3, identArray[TOKEN].id, 0, level, 666); // OPTIONAL: we used the INC
 
-  int indexOfProcInSymboltable = sizeOfSymbolTable-1; 
+  int indexOfProcInSymboltable = sizeOfSymbolTable - 1;
 
   GET_TOKEN();
 
-  if (TOKEN != semicolonsym) {
+  if (TOKEN != semicolonsym)
+  {
     printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
   }
   GET_TOKEN();
 
-  //fix the 666 there
+  // fix the 666 there
   int pro_addr = BLOCK();
 
   symbolTable[indexOfProcInSymboltable].addr = pro_addr;
 
-  if (TOKEN != semicolonsym) {
+  if (TOKEN != semicolonsym)
+  {
     printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
   }
   GET_TOKEN();
 }
 /*  $$$$$$$$$$$$$$$$$ */
 
-int BLOCK() {
+int BLOCK()
+{
 
   level++;
 
   int prev_sx = sizeOfSymbolTable;
-  
+
   int space = 3;
 
   int jmpaddr = cx; // current text(code) index
 
-  
   emit(JMP, 0, 666);
-  
+
   // if token is const
-  if (TOKEN == constsym) {
+  if (TOKEN == constsym)
+  {
     CONST_DECLARATION(); // call function
   }
 
   // if token is var
-  if (TOKEN == varsym) {
+  if (TOKEN == varsym)
+  {
     space += VAR_DECLARATION(); // call function
     printf("......space  = %d\n\n", space);
 
-    //emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
+    // emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
   }
 
   /*  $$$$$$$$$$$$$$$$$ */
   // while token is procedure
-  if (TOKEN == procsym) {
+  if (TOKEN == procsym)
+  {
 
-    
     PROC_DECL();
-    
   }
   /*  $$$$$$$$$$$$$$$$$ */
 
-  
   text[jmpaddr].M = cx * 3; // set M for JMP
 
-  int proc_addr = cx; // proc_addr is the address of the procedure
-  emit(INC, 0 , space); // INC 0 numVars + 3
-  
-  
+  int proc_addr = cx;  // proc_addr is the address of the procedure
+  emit(INC, 0, space); // INC 0 numVars + 3
+
   STATEMENT(); // call function
 
-  emit(SYS, 0,3);
+  emit(SYS, 0, 3);
 
   sizeOfSymbolTable = prev_sx;
 
   level++;
 
   return proc_addr;
-    
 }
 
 /******************************************************/
 
-void PROGRAM() {
+void PROGRAM()
+{
 
   GET_TOKEN();
 
   BLOCK(); // call function
 
-  if (TOKEN != periodsym) { // if the token is not period
+  if (TOKEN != periodsym)
+  { // if the token is not period
     error(1);
   }
   emit(SYS, 0, 3); // Halt
@@ -1266,14 +1413,17 @@ void PROGRAM() {
 
 /******************************************************/
 
-void codePrinter() {
+void codePrinter()
+{
 
   printf("Line    OP    L    M\n");
-  for (int i = 0; i < cx; i++) {
+  for (int i = 0; i < cx; i++)
+  {
     for (int j = 0; j < 3 - getLength(i); j++)
       printf(" ");
     printf("%d    ", i);
-    switch (text[i].op) {
+    switch (text[i].op)
+    {
     case 1:
       printf("LIT");
       break;
@@ -1311,16 +1461,19 @@ void codePrinter() {
 
 /******************************************************/
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
-  if (argc < 2) { // checks if there is a file
+  if (argc < 2)
+  { // checks if there is a file
     printf("Error : please include the file name");
     return 1;
   }
 
   FILE *fp = fopen(argv[1], "r"); // opens the file
 
-  if (fp == NULL) { // checks if the file is valid
+  if (fp == NULL)
+  { // checks if the file is valid
     printf("Error : cannot open file");
     return 1;
   }
@@ -1335,7 +1488,8 @@ int main(int argc, char *argv[]) {
 
   char c;
   // read character input by fscanf
-  while (fscanf(fp, "%c", &c) != EOF) {
+  while (fscanf(fp, "%c", &c) != EOF)
+  {
     // reads the file and store chacracter by chacracter in the arr
     inputArr[sizeOfinputArr] = c;
     sizeOfinputArr++;
@@ -1387,7 +1541,8 @@ int main(int argc, char *argv[]) {
   // print the source code
   printf("Source Program:\n");
   // fprintf(fp2, "Source Program:\n"); // print to file
-  for (int i = 0; i < sizeOfinputArr; i++) {
+  for (int i = 0; i < sizeOfinputArr; i++)
+  {
     printf("%c", inputArr[i]);
     // fprintf(fp2, "%c", inputArr[i]); // print to file
   }
