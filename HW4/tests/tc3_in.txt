@@ -1,0 +1,28 @@
+/* Multi Procedure Test */
+
+procedure A;
+    var x, y, z;
+    begin
+        x := 12;
+        y := 24;
+        z := 36;
+
+        x := x + y + z;
+
+        write x;
+    end.
+
+procedure B;
+    var a, b;
+    begin
+        a := 10;
+        b := 20;
+
+        a := a + b;
+        write a;
+    end.
+
+begin
+    call A;
+    call B;
+end.

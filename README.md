@@ -16,4 +16,4 @@
 ### Changes Ethan has made:
 
 - At line 893 (subject to change), checking for level when looking for duplicate declaration. This fixed compilation of challengingIn.txt
--
+- Note a new error: tc3_in, doesnt work as expected. Needs to be fixed

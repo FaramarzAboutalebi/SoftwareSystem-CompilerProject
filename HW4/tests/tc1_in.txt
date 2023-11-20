@@ -1,0 +1,13 @@
+/* Basic Test */
+
+var x, y, z;
+
+begin
+    x := 5;
+    y := 3;
+    z := 2;
+
+    z := x+y+z;
+
+    write z;
+end.

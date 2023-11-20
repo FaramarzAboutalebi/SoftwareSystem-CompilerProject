@@ -1,0 +1,16 @@
+/* Single Procedure Test  */
+
+var x;
+
+procedure A;
+    var x;
+
+    begin
+        x := 5;
+    end.
+
+begin
+    x := x+1;
+
+    call A;
+end.
