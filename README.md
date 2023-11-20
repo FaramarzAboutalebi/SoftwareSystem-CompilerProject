@@ -11,4 +11,4 @@
 
 #### Q:
 - What would be the instructions for the end of each function?
-- Can we have dub\plicated constants in different levels or different scopes?
+- Can we have duplicated constants in different levels or different scopes?
