@@ -15,3 +15,6 @@
 - Whilst in the same directory as `hwk4compiler.exe` run the
   following command in order to execute: 
             ./hwk4compiler {YOUR INPUT FILE NAME}.txt
+
+- After execution, executable linkable file, should exist in 
+  current directory as `elf.txt`. 

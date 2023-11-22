@@ -4,6 +4,7 @@ var x;
 
 procedure A;
     var x;
+    var y;
 
     begin
         x := 5;

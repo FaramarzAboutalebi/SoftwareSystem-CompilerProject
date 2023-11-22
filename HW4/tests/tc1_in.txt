@@ -1,6 +1,7 @@
 /* Basic Test */
 
 var x, y, z;
+var x1;
 
 begin
     x := 5;
