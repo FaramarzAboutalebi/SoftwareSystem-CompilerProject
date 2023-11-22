@@ -1169,7 +1169,8 @@ void PROC_DECL() {
   GET_TOKEN();
 
   if (TOKEN != identsym) {
-    printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
+    printf("ffff\n");
+    exit(0);
   }
 
   GET_TOKEN(); // index of identifire

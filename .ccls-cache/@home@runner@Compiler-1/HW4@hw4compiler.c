@@ -50,7 +50,6 @@ int sizeOfSymbolTable = 0;
 
 int currentToken = -1; // index of the current token to traverse in token_array
 int TOKEN;             // token holder
-int numVars = 0;       // vaiables counter
 
 // instrution struct
 typedef struct {
@@ -371,7 +370,6 @@ void tokenCreator(subString *subString, int sizeOfsubString) { // function
     // call
     else if (strcmp(subString[i].string, "call") == 0) {
       subString[i].Token = callsym;
-
     }
     // const
     else if (strcmp(subString[i].string, "const") == 0) {
@@ -665,8 +663,8 @@ int SYMBOLTABLECHECK(char *string) {
 
   // Iterate backwards through the symbol table.
   for (int seek = sizeOfSymbolTable - 1; seek >= 0; seek--) {
-
-    // Compare the current symbol table entry's name with the input string.
+    // Compare the current symbol table entry's name and level with the input
+    // string.
     if (strcmp(symbolTable[seek].name, string) == 0) {
 
       // If a match is found, return the current index.
@@ -773,8 +771,10 @@ void CONST_DECLARATION() {
 /******************************************************/
 
 int VAR_DECLARATION() {
+  int numVars = 0; // vaiables counter
 
   do {
+
     numVars++; // count number of variabels
 
     char ident[12];
@@ -788,8 +788,12 @@ int VAR_DECLARATION() {
     strcpy(ident, identArray[TOKEN].id);
     //.....
 
+    printf("DECLARING VAR %s @ LEVEL %d\n", ident, level);
+
+    int dupIndex = SYMBOLTABLECHECK(ident);
+
     // we need to check if it is already in the symbol table
-    if (SYMBOLTABLECHECK(ident) != -1)
+    if (dupIndex != -1 && symbolTable[dupIndex].level == level)
       error(3); // Error: Duplicate variable declaration
 
     GET_TOKEN(); // get next token
@@ -832,7 +836,8 @@ void FACTOR() {
     }
     // If the symbol is a var, emit a LOD instruction
     else if (symbolTable[symIdx].kind == 2) {
-      emit(LOD, 0, symbolTable[symIdx].addr);
+      emit(LOD, level - symbolTable[symIdx].level,
+           symbolTable[symIdx].addr); // level set
     }
     GET_TOKEN(); // Move to the next token
   }
@@ -1006,7 +1011,8 @@ void STATEMENT() {
 
     EXPRESSION(); // proess the expression after the :=
 
-    emit(4, 0, symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M
+    emit(STO, level - symbolTable[symIdx].level,
+         symbolTable[symIdx].addr); // code: sto 0 M or 4 0 M  level set
 
     return;
   }
@@ -1028,7 +1034,6 @@ void STATEMENT() {
 
     if (symbolTable[i].kind == 3) { // if identifier is a procedure
       emit(CAL, level - symbolTable[i].level, symbolTable[i].addr * 3); //
-
     } else {
       printf("\nerror\n"); // jjjjjjjjjjjjj
     }
@@ -1124,8 +1129,9 @@ void STATEMENT() {
     }
 
     GET_TOKEN();
-    emit(9, 0, 2);                        // gSYS 0 2 or 9 0 2
-    emit(4, 0, symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
+    emit(9, 0, 2); // gSYS 0 2 or 9 0 2
+    emit(STO, level - symbolTable[symIdx].level,
+         symbolTable[symIdx].addr); // STO,0, symbolTable[symIdx].addr
     return;
   }
 
@@ -1146,15 +1152,13 @@ void STATEMENT() {
 lets implwmt this code in C:
 
 procedure PROC-DECL; begin
-if TOKEN <> IDENTIFIER then ERROR() ; enter(PROCEDURE, ident, 0, level, NEXT_CODE_ADDR); GET_TOKEN();
-if TOKEN <> “;” then ERROR();
-GET_TOKEN();
+if TOKEN <> IDENTIFIER then ERROR() ; enter(PROCEDURE, ident, 0, level,
+NEXT_CODE_ADDR); GET_TOKEN(); if TOKEN <> “;” then ERROR(); GET_TOKEN();
 BLOCK();
 if TOKEN <> “;” then ERROR();
 GET_TOKEN();
-This works because the first code instruction that block() generates is the JMP for this procedure.
-end
-There are two possible addresses to use for a procedure:
+This works because the first code instruction that block() generates is the JMP
+for this procedure. end There are two possible addresses to use for a procedure:
 – The initial JMP address – The INC address
 • Both are valid to use, because the program will behave exactly in same way.
 */
@@ -1165,14 +1169,15 @@ void PROC_DECL() {
   GET_TOKEN();
 
   if (TOKEN != identsym) {
-    printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
+    printf("ffff\n");
+    exit(0);
   }
 
   GET_TOKEN(); // index of identifire
 
-  ENTER(3, identArray[TOKEN].id, 0, level, 666);// OPTIONAL: we used the INC
+  ENTER(3, identArray[TOKEN].id, 0, level, 666); // OPTIONAL: we used the INC
 
-  int indexOfProcInSymboltable = sizeOfSymbolTable-1; 
+  int indexOfProcInSymboltable = sizeOfSymbolTable - 1;
 
   GET_TOKEN();
 
@@ -1181,7 +1186,7 @@ void PROC_DECL() {
   }
   GET_TOKEN();
 
-  //fix the 666 there
+  // fix the 666 there
   int pro_addr = BLOCK();
 
   symbolTable[indexOfProcInSymboltable].addr = pro_addr;
@@ -1198,14 +1203,13 @@ int BLOCK() {
   level++;
 
   int prev_sx = sizeOfSymbolTable;
-  
-  int numVars = 0;
+
+  int space = 3;
 
   int jmpaddr = cx; // current text(code) index
 
-  
   emit(JMP, 0, 666);
-  
+
   // if token is const
   if (TOKEN == constsym) {
     CONST_DECLARATION(); // call function
@@ -1213,36 +1217,35 @@ int BLOCK() {
 
   // if token is var
   if (TOKEN == varsym) {
-    numVars = VAR_DECLARATION(); // call function
+    space += VAR_DECLARATION(); // call function
+    printf("......space  = %d\n\n", space);
 
-    //emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
+    // emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
   }
 
   /*  $$$$$$$$$$$$$$$$$ */
+
   // while token is procedure
-  if (TOKEN == procsym) {
+  while (TOKEN == procsym) {
 
     PROC_DECL();
   }
   /*  $$$$$$$$$$$$$$$$$ */
 
-  
   text[jmpaddr].M = cx * 3; // set M for JMP
 
-  int proc_addr = cx; // proc_addr is the address of the procedure
-  emit(INC, 0 , numVars + 3); // INC 0 numVars + 3
-  
-  
+  int proc_addr = cx;  // proc_addr is the address of the procedure
+  emit(INC, 0, space); // INC 0 numVars + 3
+
   STATEMENT(); // call function
 
-  emit(SYS, 0,0);
+  emit(SYS, 0, 3);
 
   sizeOfSymbolTable = prev_sx;
 
   level++;
 
   return proc_addr;
-    
 }
 
 /******************************************************/
