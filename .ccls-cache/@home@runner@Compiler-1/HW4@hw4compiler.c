@@ -491,9 +491,7 @@ void error(int typeOfError) {
     printf("Error: Constants must be assigned an integer value.\n");
     break;
   case 6:
-    printf("Error: Constant, variable, and procedure declarations must be "
-           "followed by a "
-           "semicolon.\n");
+    printf("Error: Constant, variable, and procedure declarations must be followed by a semicolon.\n");
     break;
   case 7:
     printf("Error: Undeclared identifier or out of scope %s\n",
@@ -521,8 +519,7 @@ void error(int typeOfError) {
     printf("Error: Right parenthesis must follow left parenthesis.\n");
     break;
   case 15:
-    printf("Error: Arithmetic equations must contain operands, parentheses, "
-           "numbers, or symbols.\n");
+    printf("Error: Arithmetic equations must contain operands, parentheses, numbers, or symbols.\n");
     break;
   case 16:
     printf("program to long.\n");
@@ -1314,7 +1311,7 @@ int main(int argc, char *argv[]) {
   inputArr[sizeOfinputArr] = '\0';
 
   // open a file in w mode
-  fp2 = fopen("elf.text", "w");
+  fp2 = fopen("elf.txt", "w");
 
   // arrTracker is the last index of the array
   int stringIndex = 0;

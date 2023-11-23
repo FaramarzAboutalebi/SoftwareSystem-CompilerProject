@@ -1,4 +1,4 @@
-/* Error: Const, var, procedure, call and read keywords must be followed by identifier. */
+/* Error: Const, var, procedure, call and read keywords must be followed by identifier.*/
 
 var f, n;
 procedure fact;

@@ -1,3 +1,5 @@
+/* Error: Symbol name has already been declared. */
+
 const B = 12;
 var u,h,i,g,p, f, n;
 procedure fun1;

@@ -1,3 +1,5 @@
+/* Call must be followed by procedure */
+
 var f, n;
 procedure fact;
   var ans1;

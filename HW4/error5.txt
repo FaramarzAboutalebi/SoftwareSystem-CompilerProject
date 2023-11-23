@@ -1,3 +1,5 @@
+/*Error: Undeclared identifier or out of scope fact1*/
+
 var f, n;
 procedure fact;
   var ans1;

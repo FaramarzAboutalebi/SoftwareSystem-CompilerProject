@@ -1,5 +1,4 @@
-/* Error: Constant, variable, and procedure declarations must be followed by a "
-           "semicolon. */
+/* Error: Constant, variable, and procedure declarations must be followed by a semicolon.*/
 
 var f, n;
 procedure fact

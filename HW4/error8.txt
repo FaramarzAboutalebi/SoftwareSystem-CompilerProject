@@ -1,3 +1,5 @@
+/* Error: Symbol name has already been declared.*/
+
 var f, n;
 procedure fact;
   var ans1;

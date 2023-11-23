@@ -1,3 +1,5 @@
+/* Error: Undeclared identifier or out of scope x */
+
 const B = 12;
 var u,h,i,g,p, f, n;
 procedure fun1;
