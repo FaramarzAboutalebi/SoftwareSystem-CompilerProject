@@ -1,0 +1,1 @@
+Error: Undeclared identifier or out of scope fact1
