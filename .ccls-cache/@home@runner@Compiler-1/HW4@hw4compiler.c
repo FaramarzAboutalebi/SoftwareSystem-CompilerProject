@@ -1,11 +1,11 @@
 /*
-  Aouthors' names:
+  Authors' names:
 
   Faramarz Aboutalebi
   Ethan Stein
 
 */
-//.
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +51,14 @@ int sizeOfSymbolTable = 0;
 int currentToken = -1; // index of the current token to traverse in token_array
 int TOKEN;             // token holder
 
+typedef struct {
+  int destination;
+  char name[12];
+} calInfo;
+
+calInfo callArray[MAX_ARRAY_LENGTH];
+int sizeOfCallArray = 0;
+
 // instrution struct
 typedef struct {
   int op;
@@ -63,14 +71,12 @@ instruction text[MAX_ARRAY_LENGTH];
 
 int cx = 0;           // size of the text array
 int CODE_SIZE = 1000; // max size of the text array
-// ############################
 
 int level = -1; // lexigraphical level
 
 // file pointer
 FILE *fp2;
 
-// adding $8 to the to hide them callsym and procsym????????
 typedef enum {
   oddsym = 1,
   identsym = 2,
@@ -439,10 +445,10 @@ void LexemeTable(subString *subString, int sizeOfsubString) {
       // fprintf(fp2, "%s", subString[i].string); // print to output file
 
       // creat the space to build the lexeme table
-      int len = strlen(subString[i].string);
+      // int len = strlen(subString[i].string);
       // for (int j = 0; j < 12 - len; j++)
       // {
-      //   // printf(" ");
+      //  printf(" ");
       //   //fprintf(fp2, " "); // print to output file
       // }
     }
@@ -518,7 +524,8 @@ void error(int typeOfError) {
     printf("Error: Program must end with period.\n");
     break;
   case 2:
-    printf("Error: Const, var, and read keywords must be followed by "
+    printf("Error: Const, var, procedure, call and read keywords must be "
+           "followed by "
            "identifier.\n");
     break;
   case 3:
@@ -531,11 +538,13 @@ void error(int typeOfError) {
     printf("Error: Constants must be assigned an integer value.\n");
     break;
   case 6:
-    printf("Error: Constant and variable declarations must be followed by a "
+    printf("Error: Constant, variable, and procedure declarations must be "
+           "followed by a "
            "semicolon.\n");
     break;
   case 7:
-    printf("Error: Undeclared identifier %s\n", identArray[TOKEN].id);
+    printf("Error: Undeclared identifier or out of scope %s\n",
+           identArray[TOKEN].id);
     break;
   case 8:
     printf("Error: Only variable values may be altered.\n");
@@ -564,6 +573,12 @@ void error(int typeOfError) {
     break;
   case 16:
     printf("program to long.\n");
+    break;
+  case 17:
+    printf("missing semicolon.\n");
+    break;
+  case 18:
+    printf("Call must be followed by procedure\n");
     break;
   default:
     printf("Error: Unknown error type.\n");
@@ -646,7 +661,7 @@ void printSymbolTable() {
     }
 
     printf("%s |     %d |", symbolTable[i].name, symbolTable[i].val);
-    if (symbolTable[i].kind == 2)
+    if (symbolTable[i].kind == 2 || symbolTable[i].kind == 3)
       printf("     %d |     %d |", symbolTable[i].level, symbolTable[i].addr);
     else
       printf("     - |     - |");
@@ -663,8 +678,8 @@ int SYMBOLTABLECHECK(char *string) {
 
   // Iterate backwards through the symbol table.
   for (int seek = sizeOfSymbolTable - 1; seek >= 0; seek--) {
-    // Compare the current symbol table entry's name and level with the input
-    // string.
+
+    // Compare the current symbol table entry's name with the input string.
     if (strcmp(symbolTable[seek].name, string) == 0) {
 
       // If a match is found, return the current index.
@@ -674,6 +689,26 @@ int SYMBOLTABLECHECK(char *string) {
 
   // If no match is found, return -1.
   return -1;
+}
+
+/*****************************************************/
+
+int isVarDuplicate(char *string) {
+
+  // Iterate backwards through the symbol table.
+  for (int seek = sizeOfSymbolTable - 1; seek >= 0; seek--) {
+
+    // Compare the current symbol table entry's name with the input string.
+    if (strcmp(symbolTable[seek].name, string) == 0 &&
+        level == symbolTable[seek].level) {
+
+      // If a match is found, return the current index.
+      return 1;
+    }
+  }
+
+  // If no match is found, return -1.
+  return 0;
 }
 
 /******************************************************/
@@ -721,16 +756,12 @@ void CONST_DECLARATION() {
       error(2);
     }
 
-    //.....
-    //
     GET_TOKEN(); // Although it is not part of the Pseudocode code, because of
                  // the instruction of our Token_array, we need it. After the
                  // token of identsym we store the index of the identifier
                  // stored in identArray
 
     strcpy(ident, identArray[TOKEN].id);
-
-    //.....
 
     // we need to check if it is already in the symbol table
     if (SYMBOLTABLECHECK(ident) != -1) {
@@ -788,12 +819,8 @@ int VAR_DECLARATION() {
     strcpy(ident, identArray[TOKEN].id);
     //.....
 
-    printf("DECLARING VAR %s @ LEVEL %d\n", ident, level);
-
-    int dupIndex = SYMBOLTABLECHECK(ident);
-
     // we need to check if it is already in the symbol table
-    if (dupIndex != -1 && symbolTable[dupIndex].level == level)
+    if (isVarDuplicate(ident) == 1)
       error(3); // Error: Duplicate variable declaration
 
     GET_TOKEN(); // get next token
@@ -1021,21 +1048,26 @@ void STATEMENT() {
 
     GET_TOKEN();
     if (TOKEN != identsym) {
-      printf("\n\nerror\n\n"); // jjjjjjjjjjjjj
+      error(2); // Identifier must be followed by a call
     }
     GET_TOKEN(); // TOKEN is index at this point
+
+    int indexIfProcedureName = TOKEN;
 
     // check if identifier is declared
     int i = SYMBOLTABLECHECK(identArray[TOKEN].id);
 
     if (i == -1) {
-      printf("\nerror\n"); // jjjjjjjjjjjjj
+      error(7); // Invalid symbol
     }
 
     if (symbolTable[i].kind == 3) { // if identifier is a procedure
-      emit(CAL, level - symbolTable[i].level, symbolTable[i].addr * 3); //
+
+      emit(CAL, level - symbolTable[i].level,
+           indexIfProcedureName); // save the index of the idenfifier, help us
+                                  // to find its M in the callArray
     } else {
-      printf("\nerror\n"); // jjjjjjjjjjjjj
+      error(18);
     }
 
     GET_TOKEN(); // get the next token
@@ -1146,43 +1178,32 @@ void STATEMENT() {
 
 /******************************************************/
 
-/*  $$$$$$$$$$$$$$$$$ */
-
-/*
-lets implwmt this code in C:
-
-procedure PROC-DECL; begin
-if TOKEN <> IDENTIFIER then ERROR() ; enter(PROCEDURE, ident, 0, level,
-NEXT_CODE_ADDR); GET_TOKEN(); if TOKEN <> “;” then ERROR(); GET_TOKEN();
-BLOCK();
-if TOKEN <> “;” then ERROR();
-GET_TOKEN();
-This works because the first code instruction that block() generates is the JMP
-for this procedure. end There are two possible addresses to use for a procedure:
-– The initial JMP address – The INC address
-• Both are valid to use, because the program will behave exactly in same way.
-*/
-
-// procedure-declaration ::= { "procedure" ident ";" block ";" }
 void PROC_DECL() {
 
   GET_TOKEN();
 
   if (TOKEN != identsym) {
-    printf("ffff\n");
-    exit(0);
+    error(2);
   }
 
   GET_TOKEN(); // index of identifire
 
-  ENTER(3, identArray[TOKEN].id, 0, level, 666); // OPTIONAL: we used the INC
+  int i = SYMBOLTABLECHECK(identArray[TOKEN].id);
+
+  if (i != -1)
+    error(3);
+
+  // strcpy(callArray[sizeOfCallArray].name, identArray[TOKEN].id);
+  // sizeOfCallArray++;
+
+  ENTER(3, identArray[TOKEN].id, 0, level, TOKEN); // OPTIONAL: we used the INC
 
   int indexOfProcInSymboltable = sizeOfSymbolTable - 1;
 
   GET_TOKEN();
 
   if (TOKEN != semicolonsym) {
-    printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
+    error(6);
   }
   GET_TOKEN();
 
@@ -1191,12 +1212,23 @@ void PROC_DECL() {
 
   symbolTable[indexOfProcInSymboltable].addr = pro_addr;
 
+  // populate the callArray
+  strcpy(callArray[sizeOfCallArray].name,
+         symbolTable[sizeOfSymbolTable - 1].name);
+
+  callArray[sizeOfCallArray].destination =
+      symbolTable[sizeOfSymbolTable - 1].addr;
+
+  sizeOfCallArray++;
+
   if (TOKEN != semicolonsym) {
-    printf("\n\nerror\n\n"); // jjjjjjjjjjjjjjjjjj
+    error(17); // the procedure has to end with a semicolon
+  } else {
+    emit(OPR, 0, 0);
   }
   GET_TOKEN();
 }
-/*  $$$$$$$$$$$$$$$$$ */
+/* $$$$$$$$$$$$$$$$$ */
 
 int BLOCK() {
 
@@ -1209,41 +1241,39 @@ int BLOCK() {
   int jmpaddr = cx; // current text(code) index
 
   emit(JMP, 0, 666);
+  do {
+    // if token is const
+    if (TOKEN == constsym) {
+      CONST_DECLARATION(); // call function
+    }
 
-  // if token is const
-  if (TOKEN == constsym) {
-    CONST_DECLARATION(); // call function
-  }
+    // if token is var
+    if (TOKEN == varsym) {
+      space += VAR_DECLARATION(); // call function
 
-  // if token is var
-  if (TOKEN == varsym) {
-    space += VAR_DECLARATION(); // call function
-    printf("......space  = %d\n\n", space);
+      // emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
+    }
 
-    // emit(INC, 0, numVars + 3); // create spaces for RN, SL, DL and vars
-  }
+    /*  $$$$$$$$$$$$$$$$$ */
+    // while token is procedure
+    while (TOKEN == procsym) {
 
-  /*  $$$$$$$$$$$$$$$$$ */
-
-  // while token is procedure
-  while (TOKEN == procsym) {
-
-    PROC_DECL();
-  }
+      PROC_DECL();
+    }
+  } while (TOKEN == procsym || TOKEN == varsym || TOKEN == constsym);
   /*  $$$$$$$$$$$$$$$$$ */
 
   text[jmpaddr].M = cx * 3; // set M for JMP
 
-  int proc_addr = cx;  // proc_addr is the address of the procedure
+  int proc_addr = jmpaddr; // proc_addr is the address of the procedure
+
   emit(INC, 0, space); // INC 0 numVars + 3
 
   STATEMENT(); // call function
 
-  emit(SYS, 0, 3);
-
   sizeOfSymbolTable = prev_sx;
 
-  level++;
+  level--;
 
   return proc_addr;
 }
@@ -1260,6 +1290,16 @@ void PROGRAM() {
     error(1);
   }
   emit(SYS, 0, 3); // Halt
+
+  
+  for (int i = 0; i < cx; i++) {
+    if (text[i].op == 5) {
+      for (int j = 0; j < sizeOfCallArray; j++) {
+        if (strcmp(identArray[text[i].M].id, callArray[j].name) == 0)
+          text[i].M = callArray[j].destination * 3;
+      }
+    }
+  }
 }
 
 /******************************************************/
@@ -1323,6 +1363,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  for (int i = 0; i < MAX_ARRAY_LENGTH; i++)
+    callArray[i].destination = -1;
   // define the inputArr array and subString array
   char inputArr[MAX_ARRAY_LENGTH];
   subString subString[MAX_ARRAY_LENGTH];
@@ -1398,9 +1440,10 @@ int main(int argc, char *argv[]) {
   // for (int i = 0; i < sizeOfSymbolTable; i++)
   //   symbolTable[i].mark = 1;     ?????????????
 
-  printSymbolTable(); // print the symbol table to the consol
+  // printSymbolTable(); // print the symbol table to the consol
 
   // close fp2
+
   fclose(fp2);
 
   return 0;

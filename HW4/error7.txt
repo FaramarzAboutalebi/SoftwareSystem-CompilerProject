@@ -1,0 +1,39 @@
+const B = 12;
+var u,h,i,g,p, f, n;
+procedure fun1;
+  var x,y,z ,n, m;
+  procedure fun2;
+    var u,   p;
+    procedure fun3;
+      var x,y  , z;
+      begin
+        z:=h*p+i;
+        while g+u <> z do
+          call fun1;
+        call fun3
+      end;
+    begin
+      z := x+y;
+
+    end;
+  begin
+    if odd u+p +m then
+      call fun1;
+  end;
+
+procedure sum;
+  var q, k;
+  begin
+    if q/k * x <> B then
+      call sum
+  end;
+
+
+
+begin
+  read p;
+  write u / h;
+  call fun1;
+  call sum
+
+end.
