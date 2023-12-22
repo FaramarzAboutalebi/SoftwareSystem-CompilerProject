@@ -1,4 +1,4 @@
-# README: Recursive Descent Parser and Intermediate Code Generator for tiny PL/0
+# Recursive Descent Parser and Intermediate Code Generator for tiny PL/0
 
 ## Introduction
 This README document details the implementation of HW3, which is a Recursive Descent Parser and Intermediate Code Generator for the tiny PL/0 language. The objective is to accurately parse PL/0 programs, identify syntax errors, and generate intermediate code for execution on a virtual machine.
